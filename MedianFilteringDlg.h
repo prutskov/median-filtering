@@ -4,11 +4,8 @@
 
 #pragma once
 #include <string>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/opencv.hpp>
+#include "CVHelper.h"
 
-using namespace cv;
 // Диалоговое окно CMedianFilteringDlg
 class CMedianFilteringDlg : public CDialogEx
 {
@@ -35,8 +32,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	std::string imagePath;
-
+	CVHelper cvHelper;
 
 	void loadImage();
 	afx_msg void OnBnClickedOpenImage();

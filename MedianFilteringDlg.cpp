@@ -100,7 +100,7 @@ void CMedianFilteringDlg::loadImage()
 	CString pathBMP = fd.GetPathName();
 	CT2CA pathBuf(pathBMP);
 	std::string str(pathBuf);
-	imagePath = str;
+	cvHelper.loadImage(str, IMREAD_GRAYSCALE);
 }
 
 
@@ -108,8 +108,5 @@ void CMedianFilteringDlg::loadImage()
 void CMedianFilteringDlg::OnBnClickedOpenImage()
 {
 	loadImage();
-	Mat image;
-	image = imread(imagePath, IMREAD_COLOR);   // Read the file
-	namedWindow("Display window", WINDOW_AUTOSIZE);// Create a window for display.
-	imshow("Display window", image);                   // Show our image inside it.
+	cvHelper.imageShow();
 }

@@ -195,6 +195,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CVHelper.h" />
     <ClInclude Include="MedianFiltering.h" />
     <ClInclude Include="MedianFilteringDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -202,6 +203,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CVHelper.cpp" />
     <ClCompile Include="MedianFiltering.cpp" />
     <ClCompile Include="MedianFilteringDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
