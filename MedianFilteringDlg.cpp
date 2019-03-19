@@ -30,6 +30,7 @@ void CMedianFilteringDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_OPEN_IMAGE, &CMedianFilteringDlg::OnBnClickedOpenImage)
 END_MESSAGE_MAP()
 
 
@@ -85,3 +86,30 @@ HCURSOR CMedianFilteringDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CMedianFilteringDlg::loadImage()
+{
+	CFileDialog fd(true, NULL, NULL, OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY |
+		OFN_LONGNAMES | OFN_PATHMUSTEXIST, _T("Bitmap files (*.bmp)|*.bmp| JPEG files (*.jpg)|*.jpg| All Files (*.*)|*.*||"), NULL, 0, TRUE);
+
+	if (fd.DoModal() != IDOK)
+	{
+		MessageBox(L"ERROR!!!", L"Error opening picture file.", MB_ICONERROR);
+	};
+
+
+	CString pathBMP = fd.GetPathName();
+	CT2CA pathBuf(pathBMP);
+	std::string str(pathBuf);
+	imagePath = str;
+}
+
+
+
+void CMedianFilteringDlg::OnBnClickedOpenImage()
+{
+	loadImage();
+	Mat image;
+	image = imread(imagePath, IMREAD_COLOR);   // Read the file
+	namedWindow("Display window", WINDOW_AUTOSIZE);// Create a window for display.
+	imshow("Display window", image);                   // Show our image inside it.
+}
