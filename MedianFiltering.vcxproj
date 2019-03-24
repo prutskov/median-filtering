@@ -199,6 +199,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CVHelper.h" />
+    <ClInclude Include="Filter.h" />
     <ClInclude Include="MedianFiltering.h" />
     <ClInclude Include="MedianFilteringDlg.h" />
     <ClInclude Include="Resource.h" />

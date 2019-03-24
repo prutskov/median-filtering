@@ -32,7 +32,6 @@ public:
 	void loadImage(std::string path, int flag = IMREAD_GRAYSCALE);
 	void imageShow();
 
-private:
 	Frame convertToPtr(Mat data);
 	Mat convertToMat(Frame data);
 
