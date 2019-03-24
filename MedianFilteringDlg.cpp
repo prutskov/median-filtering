@@ -89,18 +89,20 @@ HCURSOR CMedianFilteringDlg::OnQueryDragIcon()
 void CMedianFilteringDlg::loadImage()
 {
 	CFileDialog fd(true, NULL, NULL, OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY |
-		OFN_LONGNAMES | OFN_PATHMUSTEXIST, _T("Bitmap files (*.bmp)|*.bmp| JPEG files (*.jpg)|*.jpg| All Files (*.*)|*.*||"), NULL, 0, TRUE);
+		OFN_LONGNAMES | OFN_PATHMUSTEXIST, _T("All Files (*.*)|*.*| Bitmap files (*.bmp)|*.bmp| JPEG files (*.jpg)|*.jpg| |"), NULL, 0, TRUE);
 
 	if (fd.DoModal() != IDOK)
 	{
-		MessageBox(L"ERROR!!!", L"Error opening picture file.", MB_ICONERROR);
-	};
-
-
-	CString pathBMP = fd.GetPathName();
-	CT2CA pathBuf(pathBMP);
-	std::string str(pathBuf);
-	cvHelper.loadImage(str, IMREAD_GRAYSCALE);
+		MessageBox(L"File is not open!", L"Warning", MB_ICONWARNING);
+	}
+	else
+	{
+		CString pathBMP = fd.GetPathName();
+		CT2CA pathBuf(pathBMP);
+		std::string str(pathBuf);
+		cvHelper.loadImage(str, IMREAD_GRAYSCALE);
+		cvHelper.imageShow();
+	}
 }
 
 
@@ -108,5 +110,4 @@ void CMedianFilteringDlg::loadImage()
 void CMedianFilteringDlg::OnBnClickedOpenImage()
 {
 	loadImage();
-	cvHelper.imageShow();
 }

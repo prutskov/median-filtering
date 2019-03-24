@@ -18,6 +18,7 @@ struct Frame
 		dataPtr = data;
 	}
 
+	/*Pointer to float data in [0..1]*/
 	std::shared_ptr<float[]> dataPtr;
 	int nRows;
 	int nCols;
@@ -33,6 +34,7 @@ public:
 
 private:
 	Frame convertToPtr(Mat data);
+	Mat convertToMat(Frame data);
 
 private:
 	Mat _loadedImage;
