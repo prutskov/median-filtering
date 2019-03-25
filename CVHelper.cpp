@@ -66,8 +66,3 @@ Frame CVHelper::getImage()
 {
 	return this->_imagePtr;
 }
-
-void CVHelper::setImage(Frame frame)
-{
-	
-}

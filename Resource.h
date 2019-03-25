@@ -5,8 +5,8 @@
 #define IDD_MEDIANFILTERING_DIALOG      102
 #define IDR_MAINFRAME                   128
 #define IDC_OPEN_IMAGE                  1000
-#define IDC_BUTTON1                     1001
 #define IDC_FILTER                      1001
+#define IDC_FILTER2                     1002
 
 // Next default values for new objects
 // 

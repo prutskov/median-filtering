@@ -47,7 +47,7 @@ BOOL CMedianFilteringDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Мелкий значок
 
 	// TODO: добавьте дополнительную инициализацию
-
+	srand(time(NULL));
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления
 }
 
@@ -118,6 +118,8 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 {
 	Parameter parameter = { 3 };
 	FilterHost filter(parameter, cvHelper.getImage());
+	filter.generateNoise(0.80);
+	cvHelper.imageShow("Noised image", filter.getFrame(), WINDOW_NORMAL);
 	filter.compute();
 	cvHelper.imageShow("Filtered image", filter.getFrame(), WINDOW_NORMAL);
 }

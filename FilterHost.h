@@ -9,6 +9,7 @@ public:
 	virtual Frame getFrame();
 	virtual void setFrame(const Frame &frame);
 	virtual void compute();
+	void generateNoise(float percent);
 	virtual ~FilterHost();
 private:
 	void quickSort(float* data, int size);

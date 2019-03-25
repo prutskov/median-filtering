@@ -36,7 +36,6 @@ public:
 	Frame convertToPtr(Mat data);
 	Mat convertToMat(Frame data);
 	Frame getImage();
-	void setImage(Frame frame);
 
 private:
 	Mat _loadedImage;

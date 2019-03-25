@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "FilterHost.h"
+#include <ctime>
 
 
 FilterHost::FilterHost()
@@ -37,7 +38,7 @@ void FilterHost::compute()
 	const int nRows = _frame.nRows - 2;
 	const int nCols = _frame.nCols - 2;
 	Frame result(nRows, nCols,
-			std::shared_ptr<float[]>(new float[nRows*nCols],std::default_delete<float[]>()));
+		std::shared_ptr<float[]>(new float[nRows*nCols], std::default_delete<float[]>()));
 
 #pragma omp parallel for
 	for (int i = 0; i < nRows; i++)
@@ -55,7 +56,7 @@ void FilterHost::quickSort(float* data, int size)
 {
 	int i = 0;
 	int j = size - 1;
-	float temp, p;
+	float p;
 
 	p = data[size >> 1];
 
@@ -76,9 +77,9 @@ void FilterHost::quickSort(float* data, int size)
 float FilterHost::medianGet(int x, int y, const Frame& frame)
 {
 	/*Indexes from original frame for mask*/
-	int indexes[9] = {(y - 1)*frame.nCols + x - 1, (y - 1)*frame.nCols + x, (y - 1)*frame.nCols + x + 1,
+	int indexes[9] = { (y - 1)*frame.nCols + x - 1, (y - 1)*frame.nCols + x, (y - 1)*frame.nCols + x + 1,
 					  y*frame.nCols + x - 1, y*frame.nCols + x, y*frame.nCols + x + 1,
-					  (y +1)*frame.nCols + x - 1, (y + 1)*frame.nCols + x, (y + 1)*frame.nCols + x + 1 };
+					  (y + 1)*frame.nCols + x - 1, (y + 1)*frame.nCols + x, (y + 1)*frame.nCols + x + 1 };
 
 	/*Get submatrix from filter-mask*/
 	float matrixForSorting[9];
@@ -92,4 +93,21 @@ float FilterHost::medianGet(int x, int y, const Frame& frame)
 
 	/*Return median*/
 	return matrixForSorting[4];
+}
+
+void FilterHost::generateNoise(float percent)
+{
+	const int nRows = _frame.nRows;
+	const int nCols = _frame.nCols;
+
+	const int nNoisedPixels = static_cast<int>(nRows*nCols*percent);
+	int k = 0;
+	while (k <= nNoisedPixels)
+	{
+		const int i = rand() % nRows;
+		const int j = rand() % nCols;
+
+		_frame.dataPtr[i*nCols + j] = rand() % 2;
+		k++;
+	}
 }
