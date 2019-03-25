@@ -16,16 +16,16 @@ void CVHelper::loadImage(std::string path, int flag)
 	_imagePtr = convertToPtr(_loadedImage);
 }
 
-void CVHelper::imageShow()
+void CVHelper::imageShow(int mode)
 {
-	namedWindow("Image", WINDOW_AUTOSIZE);
+	namedWindow("Image", mode);
 	moveWindow("Image", 0, 0);
 	imshow("Image", _loadedImage);
 }
 
-void CVHelper::imageShow(std::string name, Frame image)
+void CVHelper::imageShow(std::string name, Frame image, int mode)
 {
-	namedWindow(name, WINDOW_AUTOSIZE);
+	namedWindow(name, mode);
 	moveWindow(name, 0, 0);
 	imshow(name, convertToMat(image));
 }

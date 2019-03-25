@@ -102,7 +102,7 @@ void CMedianFilteringDlg::loadImage()
 		CT2CA pathBuf(pathBMP);
 		std::string str(pathBuf);
 		cvHelper.loadImage(str, IMREAD_GRAYSCALE);
-		cvHelper.imageShow();
+		cvHelper.imageShow(WINDOW_NORMAL);
 	}
 }
 
@@ -119,5 +119,5 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 	Parameter parameter = { 3 };
 	FilterHost filter(parameter, cvHelper.getImage());
 	filter.compute();
-	cvHelper.imageShow("Filtered image", filter.getFrame());
+	cvHelper.imageShow("Filtered image", filter.getFrame(), WINDOW_NORMAL);
 }

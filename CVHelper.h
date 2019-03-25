@@ -30,8 +30,8 @@ public:
 	CVHelper();
 	virtual ~CVHelper();
 	void loadImage(std::string path, int flag = IMREAD_GRAYSCALE);
-	void imageShow();
-	void imageShow(std::string name, Frame image);
+	void imageShow(int mode);
+	void imageShow(std::string name, Frame image, int mode);
 
 	Frame convertToPtr(Mat data);
 	Mat convertToMat(Frame data);

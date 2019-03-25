@@ -39,6 +39,7 @@ void FilterHost::compute()
 	Frame result(nRows, nCols,
 			std::shared_ptr<float[]>(new float[nRows*nCols],std::default_delete<float[]>()));
 
+#pragma omp parallel for
 	for (int i = 0; i < nRows; i++)
 	{
 		for (int j = 0; j < nCols; j++)
