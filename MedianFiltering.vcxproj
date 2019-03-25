@@ -200,6 +200,7 @@
   <ItemGroup>
     <ClInclude Include="CVHelper.h" />
     <ClInclude Include="Filter.h" />
+    <ClInclude Include="FilterHost.h" />
     <ClInclude Include="MedianFiltering.h" />
     <ClInclude Include="MedianFilteringDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -208,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CVHelper.cpp" />
+    <ClCompile Include="FilterHost.cpp" />
     <ClCompile Include="MedianFiltering.cpp" />
     <ClCompile Include="MedianFilteringDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
