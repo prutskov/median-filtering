@@ -5,6 +5,7 @@
 #pragma once
 #include <string>
 #include "CVHelper.h"
+#include "FilterHost.h"
 
 // Диалоговое окно CMedianFilteringDlg
 class CMedianFilteringDlg : public CDialogEx
@@ -36,4 +37,5 @@ public:
 
 	void loadImage();
 	afx_msg void OnBnClickedOpenImage();
+	afx_msg void OnBnClickedFilter();
 };

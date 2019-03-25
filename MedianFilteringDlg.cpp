@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_OPEN_IMAGE, &CMedianFilteringDlg::OnBnClickedOpenImage)
+	ON_BN_CLICKED(IDC_FILTER, &CMedianFilteringDlg::OnBnClickedFilter)
 END_MESSAGE_MAP()
 
 
@@ -110,4 +111,13 @@ void CMedianFilteringDlg::loadImage()
 void CMedianFilteringDlg::OnBnClickedOpenImage()
 {
 	loadImage();
+}
+
+
+void CMedianFilteringDlg::OnBnClickedFilter()
+{
+	Parameter parameter = { 3 };
+	FilterHost filter(parameter, cvHelper.getImage());
+	filter.compute();
+	cvHelper.imageShow("Filtered image", filter.getFrame());
 }

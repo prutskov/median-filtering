@@ -43,7 +43,7 @@ void FilterHost::compute()
 	{
 		for (int j = 0; j < nCols; j++)
 		{
-			result.dataPtr[i*nCols + j] = medianGet(i + 1, j + 1, _frame);
+			result.dataPtr[i*nCols + j] = medianGet(j + 1, i + 1, _frame);
 		}
 	}
 

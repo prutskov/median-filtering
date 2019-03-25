@@ -23,6 +23,13 @@ void CVHelper::imageShow()
 	imshow("Image", _loadedImage);
 }
 
+void CVHelper::imageShow(std::string name, Frame image)
+{
+	namedWindow(name, WINDOW_AUTOSIZE);
+	moveWindow(name, 0, 0);
+	imshow(name, convertToMat(image));
+}
+
 Frame CVHelper::convertToPtr(Mat data)
 {
 	const int nRows = data.rows;
@@ -53,4 +60,14 @@ Mat CVHelper::convertToMat(Frame data)
 	cv::Mat_<float> mat(nRows, nCols, data.dataPtr.get());
 	
 	return mat.clone();
+}
+
+Frame CVHelper::getImage()
+{
+	return this->_imagePtr;
+}
+
+void CVHelper::setImage(Frame frame)
+{
+	
 }
