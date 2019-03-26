@@ -13,7 +13,6 @@ CVHelper::~CVHelper()
 void CVHelper::loadImage(std::string path, int flag)
 {
 	_loadedImage = imread(path, flag);
-	_imagePtr = convertToPtr(_loadedImage);
 }
 
 void CVHelper::imageShow(int mode)
@@ -64,5 +63,6 @@ Mat CVHelper::convertToMat(Frame data)
 
 Frame CVHelper::getImage()
 {
-	return this->_imagePtr;
+	_imagePtr = convertToPtr(_loadedImage);
+	return _imagePtr;
 }

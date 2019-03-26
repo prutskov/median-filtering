@@ -39,4 +39,5 @@ public:
 	afx_msg void OnBnClickedOpenImage();
 	afx_msg void OnBnClickedFilter();
 	BOOL _isAddNoise;
+	float _percentNoise;
 };

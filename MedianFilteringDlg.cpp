@@ -19,6 +19,7 @@
 CMedianFilteringDlg::CMedianFilteringDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MEDIANFILTERING_DIALOG, pParent)
 	, _isAddNoise(TRUE)
+	, _percentNoise(30)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -27,6 +28,7 @@ void CMedianFilteringDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Check(pDX, IDC_CHECK1, _isAddNoise);
+	DDX_Text(pDX, IDC_EDIT1, _percentNoise);
 }
 
 BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
@@ -123,9 +125,10 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 	FilterHost filter(parameter, cvHelper.getImage());
 	if (_isAddNoise)
 	{
-		filter.generateNoise(0.80F);
+		filter.generateNoise(_percentNoise / 100.0F);
 		cvHelper.imageShow("Noised image", filter.getFrame(), WINDOW_NORMAL);
 	}
 	filter.compute();
 	cvHelper.imageShow("Filtered image", filter.getFrame(), WINDOW_NORMAL);
+	cvHelper.imageShow(WINDOW_NORMAL);
 }
