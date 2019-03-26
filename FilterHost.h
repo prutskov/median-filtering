@@ -11,5 +11,7 @@ public:
 private:
 	void quickSort(float* data, int size);
 	float medianGet(int xCenterMask, int yCenterMask, const Frame& frame);
+	void compute3x3();
+	void compute5x5();
 };
 
