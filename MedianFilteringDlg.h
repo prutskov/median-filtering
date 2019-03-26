@@ -40,4 +40,5 @@ public:
 	afx_msg void OnBnClickedFilter();
 	BOOL _isAddNoise;
 	float _percentNoise;
+	int _maskType;
 };

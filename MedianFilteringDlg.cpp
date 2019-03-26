@@ -20,6 +20,7 @@ CMedianFilteringDlg::CMedianFilteringDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MEDIANFILTERING_DIALOG, pParent)
 	, _isAddNoise(TRUE)
 	, _percentNoise(30)
+	, _maskType(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -29,6 +30,7 @@ void CMedianFilteringDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Check(pDX, IDC_CHECK1, _isAddNoise);
 	DDX_Text(pDX, IDC_EDIT1, _percentNoise);
+	DDX_Radio(pDX, IDC_RADIO_MASK3, _maskType);
 }
 
 BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
@@ -121,7 +123,13 @@ void CMedianFilteringDlg::OnBnClickedOpenImage()
 void CMedianFilteringDlg::OnBnClickedFilter()
 {
 	UpdateData(TRUE);
-	Parameter parameter = { Mask::MASK3X3 };
+	Parameter parameter = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
+
+	if (cvHelper.isNullImage())
+	{
+		MessageBox(L"Please, load image.", L"Warning", MB_ICONINFORMATION);
+		return;
+	}
 	FilterHost filter(parameter, cvHelper.getImage());
 	if (_isAddNoise)
 	{

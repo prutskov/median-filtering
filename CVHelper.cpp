@@ -17,16 +17,25 @@ void CVHelper::loadImage(std::string path, int flag)
 
 void CVHelper::imageShow(int mode)
 {
-	namedWindow("Image", mode);
-	moveWindow("Image", 0, 0);
-	imshow("Image", _loadedImage);
+	std::string nameWindow = "Original image. Size: " + std::to_string(_loadedImage.rows) +
+		"x" + std::to_string(_loadedImage.cols);
+	namedWindow(nameWindow, mode);
+	moveWindow(nameWindow, 0, 0);
+	imshow(nameWindow, _loadedImage);
 }
 
 void CVHelper::imageShow(std::string name, Frame image, int mode)
 {
-	namedWindow(name, mode);
-	moveWindow(name, 0, 0);
-	imshow(name, convertToMat(image));
+	std::string nameWindow = name + " Size: " + std::to_string(image.nRows) +
+		"x" + std::to_string(image.nCols);
+	namedWindow(nameWindow, mode);
+	moveWindow(nameWindow, 0, 0);
+	imshow(nameWindow, convertToMat(image));
+}
+
+bool CVHelper::isNullImage()
+{
+	return _loadedImage.empty();
 }
 
 Frame CVHelper::convertToPtr(Mat data)
