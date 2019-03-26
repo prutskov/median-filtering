@@ -1,17 +1,25 @@
 #pragma once
 #include "CVHelper.h"
 
+enum Mask
+{
+	MASK3X3,
+	MASK5X5
+};
+
 struct Parameter
 {
-	size_t filterSize;
+	Mask mask;
 };
 
 class Filter
 {
 public:
-	Filter() {}
-	virtual Frame getFrame() = 0;
-	virtual void setFrame(const Frame &frame) = 0;
+	Filter();
+	Filter(const Parameter &parameter, const Frame &frame);
+	virtual Frame getFrame();
+	virtual void setFrame(const Frame &frame);
+	virtual void generateNoise(float percent);
 	virtual void compute() = 0;
 
 	virtual ~Filter() {}

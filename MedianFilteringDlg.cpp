@@ -18,6 +18,7 @@
 
 CMedianFilteringDlg::CMedianFilteringDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MEDIANFILTERING_DIALOG, pParent)
+	, _isAddNoise(TRUE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -25,6 +26,7 @@ CMedianFilteringDlg::CMedianFilteringDlg(CWnd* pParent /*=nullptr*/)
 void CMedianFilteringDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Check(pDX, IDC_CHECK1, _isAddNoise);
 }
 
 BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
@@ -47,7 +49,7 @@ BOOL CMedianFilteringDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Мелкий значок
 
 	// TODO: добавьте дополнительную инициализацию
-	srand(time(NULL));
+	srand(static_cast<uint>(time(NULL)));
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления
 }
 
@@ -116,10 +118,14 @@ void CMedianFilteringDlg::OnBnClickedOpenImage()
 
 void CMedianFilteringDlg::OnBnClickedFilter()
 {
-	Parameter parameter = { 3 };
+	UpdateData(TRUE);
+	Parameter parameter = { Mask::MASK3X3 };
 	FilterHost filter(parameter, cvHelper.getImage());
-	filter.generateNoise(0.80);
-	cvHelper.imageShow("Noised image", filter.getFrame(), WINDOW_NORMAL);
+	if (_isAddNoise)
+	{
+		filter.generateNoise(0.80F);
+		cvHelper.imageShow("Noised image", filter.getFrame(), WINDOW_NORMAL);
+	}
 	filter.compute();
 	cvHelper.imageShow("Filtered image", filter.getFrame(), WINDOW_NORMAL);
 }

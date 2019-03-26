@@ -6,10 +6,7 @@ class FilterHost :	public Filter
 public:
 	FilterHost();
 	FilterHost(const Parameter &parameter, const Frame &frame);
-	virtual Frame getFrame();
-	virtual void setFrame(const Frame &frame);
-	virtual void compute();
-	void generateNoise(float percent);
+	void compute() override;
 	virtual ~FilterHost();
 private:
 	void quickSort(float* data, int size);

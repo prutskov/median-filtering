@@ -210,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CVHelper.cpp" />
+    <ClCompile Include="Filter.cpp" />
     <ClCompile Include="FilterHost.cpp" />
     <ClCompile Include="MedianFiltering.cpp" />
     <ClCompile Include="MedianFilteringDlg.cpp" />

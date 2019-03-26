@@ -3,34 +3,14 @@
 #include <ctime>
 
 
-FilterHost::FilterHost()
-{
-	this->_frame.nCols = 0;
-	this->_frame.nRows = 0;
-	this->_frame.dataPtr = 0;
-	this->_parameter.filterSize = 3;
-}
+FilterHost::FilterHost() : Filter() {}
 
 FilterHost::FilterHost(const Parameter &parameter, const Frame &frame)
-{
-	this->_frame.nCols = frame.nCols;
-	this->_frame.nRows = frame.nRows;
-	this->_frame.dataPtr = frame.dataPtr;
-	this->_parameter = parameter;
-}
+	: Filter(parameter, frame)
+{}
 
 FilterHost::~FilterHost()
 {
-}
-
-Frame FilterHost::getFrame()
-{
-	return _frame;
-}
-
-void FilterHost::setFrame(const Frame &frame)
-{
-	_frame = frame;
 }
 
 void FilterHost::compute()
@@ -93,21 +73,4 @@ float FilterHost::medianGet(int x, int y, const Frame& frame)
 
 	/*Return median*/
 	return matrixForSorting[4];
-}
-
-void FilterHost::generateNoise(float percent)
-{
-	const int nRows = _frame.nRows;
-	const int nCols = _frame.nCols;
-
-	const int nNoisedPixels = static_cast<int>(nRows*nCols*percent);
-	int k = 0;
-	while (k <= nNoisedPixels)
-	{
-		const int i = rand() % nRows;
-		const int j = rand() % nCols;
-
-		_frame.dataPtr[i*nCols + j] = rand() % 2;
-		k++;
-	}
 }
