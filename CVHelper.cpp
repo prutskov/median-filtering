@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "CVHelper.h"
 
-CVHelper::CVHelper()
+CVHelper::CVHelper(Log *log)
 {
+	this->_log = log;
 }
-
 
 CVHelper::~CVHelper()
 {
@@ -13,6 +13,7 @@ CVHelper::~CVHelper()
 void CVHelper::loadImage(std::string path, int flag)
 {
 	_loadedImage = imread(path, flag);
+	_log->add("Image loaded from: " + path);
 }
 
 void CVHelper::imageShow(int mode)
@@ -22,6 +23,8 @@ void CVHelper::imageShow(int mode)
 	namedWindow(nameWindow, mode);
 	moveWindow(nameWindow, 0, 0);
 	imshow(nameWindow, _loadedImage);
+	_log->add("Show original image. Size: " + std::to_string(_loadedImage.rows)
+		+ "x" + std::to_string(_loadedImage.cols));
 }
 
 void CVHelper::imageShow(std::string name, Frame image, int mode)
@@ -31,6 +34,7 @@ void CVHelper::imageShow(std::string name, Frame image, int mode)
 	namedWindow(nameWindow, mode);
 	moveWindow(nameWindow, 0, 0);
 	imshow(nameWindow, convertToMat(image));
+	_log->add("Show " + nameWindow);
 }
 
 bool CVHelper::isNullImage()
@@ -66,7 +70,7 @@ Mat CVHelper::convertToMat(Frame data)
 	const int nCols = data.nCols;
 
 	cv::Mat_<float> mat(nRows, nCols, data.dataPtr.get());
-	
+
 	return mat.clone();
 }
 

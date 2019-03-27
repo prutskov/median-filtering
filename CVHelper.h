@@ -4,6 +4,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <memory>
+#include "Log.h"
 
 using namespace cv;
 
@@ -27,7 +28,7 @@ struct Frame
 class CVHelper
 {
 public:
-	CVHelper();
+	CVHelper(Log *log);
 	virtual ~CVHelper();
 	void loadImage(std::string path, int flag = IMREAD_GRAYSCALE);
 	void imageShow(int mode);
@@ -40,6 +41,7 @@ public:
 private:
 	Mat _loadedImage;
 	Frame _imagePtr;
+	Log *_log;
 };
 
 

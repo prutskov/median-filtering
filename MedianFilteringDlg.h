@@ -6,6 +6,8 @@
 #include <string>
 #include "CVHelper.h"
 #include "FilterHost.h"
+#include "Log.h"
+#include "chrono"
 
 // Диалоговое окно CMedianFilteringDlg
 class CMedianFilteringDlg : public CDialogEx
@@ -33,7 +35,6 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	CVHelper cvHelper;
 
 	void loadImage();
 	afx_msg void OnBnClickedOpenImage();
@@ -41,4 +42,8 @@ public:
 	BOOL _isAddNoise;
 	float _percentNoise;
 	int _maskType;
+	CEdit _logElement;
+
+	CVHelper* cvHelper;
+	Log *_log;
 };

@@ -31,6 +31,7 @@ void CMedianFilteringDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK1, _isAddNoise);
 	DDX_Text(pDX, IDC_EDIT1, _percentNoise);
 	DDX_Radio(pDX, IDC_RADIO_MASK3, _maskType);
+	DDX_Control(pDX, IDC_LOG, _logElement);
 }
 
 BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
@@ -54,6 +55,8 @@ BOOL CMedianFilteringDlg::OnInitDialog()
 
 	// TODO: добавьте дополнительную инициализацию
 	srand(static_cast<uint>(time(NULL)));
+	_log = new Log(&_logElement);
+	cvHelper = new CVHelper(_log);
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления
 }
 
@@ -107,8 +110,8 @@ void CMedianFilteringDlg::loadImage()
 		CString pathBMP = fd.GetPathName();
 		CT2CA pathBuf(pathBMP);
 		std::string str(pathBuf);
-		cvHelper.loadImage(str, IMREAD_GRAYSCALE);
-		cvHelper.imageShow(WINDOW_NORMAL);
+		cvHelper->loadImage(str, IMREAD_GRAYSCALE);
+		cvHelper->imageShow(WINDOW_NORMAL);
 	}
 }
 
@@ -125,18 +128,22 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 	UpdateData(TRUE);
 	Parameter parameter = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
 
-	if (cvHelper.isNullImage())
+	if (cvHelper->isNullImage())
 	{
+		_log->add("Image is null. Load image for continue...");
 		MessageBox(L"Please, load image.", L"Warning", MB_ICONINFORMATION);
 		return;
 	}
-	FilterHost filter(parameter, cvHelper.getImage());
+	FilterHost filter(parameter, cvHelper->getImage());
 	if (_isAddNoise)
 	{
 		filter.generateNoise(_percentNoise / 100.0F);
-		cvHelper.imageShow("Noised image", filter.getFrame(), WINDOW_NORMAL);
+		cvHelper->imageShow("Noised image", filter.getFrame(), WINDOW_NORMAL);
 	}
+	auto start = std::chrono::high_resolution_clock::now();
 	filter.compute();
-	cvHelper.imageShow("Filtered image", filter.getFrame(), WINDOW_NORMAL);
-	cvHelper.imageShow(WINDOW_NORMAL);
+	auto end = std::chrono::high_resolution_clock::now();
+	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()/1000.0F;
+	_log->add("Filter: HostAlg. Elapsed time: " + std::to_string(duration) + "ms");
+	cvHelper->imageShow("Filtered image", filter.getFrame(), WINDOW_NORMAL);
 }
