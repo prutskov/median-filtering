@@ -20,7 +20,7 @@ public:
 	virtual Frame getFrame();
 	virtual void setFrame(const Frame &frame);
 	virtual void generateNoise(float percent);
-	virtual void compute() = 0;
+	virtual void compute() {};
 
 	virtual ~Filter() {}
 protected:

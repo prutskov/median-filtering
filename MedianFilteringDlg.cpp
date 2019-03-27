@@ -134,16 +134,16 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 		MessageBox(L"Please, load image.", L"Warning", MB_ICONINFORMATION);
 		return;
 	}
-	FilterHost filter(parameter, cvHelper->getImage());
+	std::shared_ptr<Filter> filter = std::shared_ptr<FilterHost>(new FilterHost(parameter, cvHelper->getImage()));
 	if (_isAddNoise)
 	{
-		filter.generateNoise(_percentNoise / 100.0F);
-		cvHelper->imageShow("Noised image", filter.getFrame(), WINDOW_NORMAL);
+		filter->generateNoise(_percentNoise / 100.0F);
+		cvHelper->imageShow("Noised image", filter->getFrame(), WINDOW_NORMAL);
 	}
 	auto start = std::chrono::high_resolution_clock::now();
-	filter.compute();
+	filter->compute();
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()/1000.0F;
 	_log->add("Filter: HostAlg. Elapsed time: " + std::to_string(duration) + "ms");
-	cvHelper->imageShow("Filtered image", filter.getFrame(), WINDOW_NORMAL);
+	cvHelper->imageShow("Filtered image", filter->getFrame(), WINDOW_NORMAL);
 }
