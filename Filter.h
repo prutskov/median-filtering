@@ -1,5 +1,6 @@
 #pragma once
 #include "CVHelper.h"
+#include "Log.h"
 
 enum Mask
 {
@@ -15,8 +16,7 @@ struct Parameter
 class Filter
 {
 public:
-	Filter();
-	Filter(const Parameter &parameter, const Frame &frame);
+	Filter(const Parameter &parameter, const Frame &frame, Log * _log);
 	virtual Frame getFrame();
 	virtual void setFrame(const Frame &frame);
 	virtual void generateNoise(float percent);
@@ -26,5 +26,6 @@ public:
 protected:
 	Frame _frame;
 	Parameter _parameter;
+	Log * _log;
 };
 

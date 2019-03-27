@@ -2,11 +2,8 @@
 #include "FilterHost.h"
 #include <ctime>
 
-
-FilterHost::FilterHost() : Filter() {}
-
-FilterHost::FilterHost(const Parameter &parameter, const Frame &frame)
-	: Filter(parameter, frame)
+FilterHost::FilterHost(const Parameter &parameter, const Frame &frame, Log *log)
+	: Filter(parameter, frame, log)
 {}
 
 FilterHost::~FilterHost()
@@ -27,45 +24,7 @@ void FilterHost::compute()
 
 void FilterHost::quickSort(float* data, int size)
 {
-	int i = 0;
-	int j = size - 1;
-	float p;
-
-	p = data[size >> 1];
-
-	do {
-		while (data[i] < p) i++;
-		while (data[j] > p) j--;
-
-		if (i <= j) {
-			swap(data[i], data[j]);
-			i++; j--;
-		}
-	} while (i <= j);
-
-	if (j > 0) quickSort(data, j);
-	if (i < size) quickSort(data + i, size - i);
-}
-
-float FilterHost::medianGet(int x, int y, const Frame& frame)
-{
-	/*Indexes from original frame for mask*/
-	int indexes[9] = { (y - 1)*frame.nCols + x - 1, (y - 1)*frame.nCols + x, (y - 1)*frame.nCols + x + 1,
-					  y*frame.nCols + x - 1, y*frame.nCols + x, y*frame.nCols + x + 1,
-					  (y + 1)*frame.nCols + x - 1, (y + 1)*frame.nCols + x, (y + 1)*frame.nCols + x + 1 };
-
-	/*Get submatrix from filter-mask*/
-	float matrixForSorting[9];
-	for (int i = 0; i < 9; i++)
-	{
-		matrixForSorting[i] = frame.dataPtr[indexes[i]];
-	}
-
-	/*Sorting array*/
-	quickSort(matrixForSorting, 9);
-
-	/*Return median*/
-	return matrixForSorting[4];
+	std::sort(data, data + size);
 }
 
 void FilterHost::compute3x3()

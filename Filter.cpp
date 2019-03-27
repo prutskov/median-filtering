@@ -1,11 +1,8 @@
 #include "stdafx.h"
 #include "Filter.h"
 
-Filter::Filter()
-{
-}
-
-Filter::Filter(const Parameter & parameter, const Frame & frame) : _parameter(parameter), _frame(frame)
+Filter::Filter(const Parameter & parameter, const Frame & frame, Log* log) 
+	: _parameter(parameter), _frame(frame), _log(log)
 {
 }
 

@@ -134,7 +134,7 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 		MessageBox(L"Please, load image.", L"Warning", MB_ICONINFORMATION);
 		return;
 	}
-	std::shared_ptr<Filter> filter = std::shared_ptr<FilterHost>(new FilterHost(parameter, cvHelper->getImage()));
+	std::shared_ptr<Filter> filter = std::shared_ptr<FilterHost>(new FilterHost(parameter, cvHelper->getImage(), _log));
 	if (_isAddNoise)
 	{
 		filter->generateNoise(_percentNoise / 100.0F);
