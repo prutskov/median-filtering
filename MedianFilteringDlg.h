@@ -6,6 +6,7 @@
 #include <string>
 #include "CVHelper.h"
 #include "FilterHost.h"
+#include "FilterDevice.h"
 #include "Log.h"
 #include "chrono"
 

@@ -146,4 +146,7 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()/1000.0F;
 	_log->add("Filter: HostAlg. Elapsed time: " + std::to_string(duration) + "ms");
 	cvHelper->imageShow("Filtered image", filter->getFrame(), WINDOW_NORMAL);
+
+	Filter *filter2 = new FilterDevice(parameter, cvHelper->getImage(), _log);
+	filter2->compute();
 }
