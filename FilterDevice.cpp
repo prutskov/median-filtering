@@ -30,7 +30,7 @@ void FilterDevice::compute()
 		std::shared_ptr<float[]>(new float[nRows*nCols], std::default_delete<float[]>()));
 
 	cl::CommandQueue comqueque(_context, _context.getInfo<CL_CONTEXT_DEVICES>()[0]);
-	
+
 	auto start = std::chrono::high_resolution_clock::now();
 	cl::Buffer imageIn = cl::Buffer(_context,
 		CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
@@ -38,7 +38,7 @@ void FilterDevice::compute()
 
 	cl::Buffer imageOut = cl::Buffer(_context,
 		CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-		(result.nRows*result.nCols) * sizeof(float), result.dataPtr.get());	
+		(result.nRows*result.nCols) * sizeof(float), result.dataPtr.get());
 
 	cl::Kernel kernel(_program, "nativeFilter3x3");
 
@@ -54,7 +54,7 @@ void FilterDevice::compute()
 
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
-	_log->add("Filter: Device algorithm. Timing: " + std::to_string(duration) + "ms");
+	_log->add("Filter: Device algorithm. Timing: " + std::to_string(duration) + " ms");
 	_frame = result;
 
 }
