@@ -21,6 +21,7 @@ CMedianFilteringDlg::CMedianFilteringDlg(CWnd* pParent /*=nullptr*/)
 	, _isAddNoise(TRUE)
 	, _percentNoise(30)
 	, _maskType(0)
+	, _acceleratorType(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -32,6 +33,7 @@ void CMedianFilteringDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT1, _percentNoise);
 	DDX_Radio(pDX, IDC_RADIO_MASK3, _maskType);
 	DDX_Control(pDX, IDC_LOG, _logElement);
+	DDX_Radio(pDX, IDC_ACC_HOST, _acceleratorType);
 }
 
 BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
@@ -134,19 +136,28 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 		MessageBox(L"Please, load image.", L"Warning", MB_ICONINFORMATION);
 		return;
 	}
-	std::shared_ptr<Filter> filter = std::shared_ptr<FilterHost>(new FilterHost(parameter, cvHelper->getImage(), _log));
-	if (_isAddNoise)
-	{
-		filter->generateNoise(_percentNoise / 100.0F);
-		cvHelper->imageShow("Noised image", filter->getFrame(), WINDOW_NORMAL);
-	}
-	auto start = std::chrono::high_resolution_clock::now();
-	filter->compute();
-	auto end = std::chrono::high_resolution_clock::now();
-	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count()/1000.0F;
-	_log->add("Filter: HostAlg. Elapsed time: " + std::to_string(duration) + "ms");
-	cvHelper->imageShow("Filtered image", filter->getFrame(), WINDOW_NORMAL);
 
-	Filter *filter2 = new FilterDevice(parameter, cvHelper->getImage(), _log);
-	filter2->compute();
+	std::shared_ptr<Filter> filter;
+	if (_acceleratorType == 0)
+	{
+		filter = std::shared_ptr<FilterHost>(new FilterHost(parameter, cvHelper->getImage(), _log));
+		if (_isAddNoise)
+		{
+			filter->generateNoise(_percentNoise / 100.0F);
+			cvHelper->imageShow("Noised image", filter->getFrame(), WINDOW_NORMAL);
+		}
+		filter->compute();
+		cvHelper->imageShow("Filtered image", filter->getFrame(), WINDOW_NORMAL);
+	}
+	else if (_acceleratorType == 1)
+	{
+		filter = std::shared_ptr<FilterDevice>(new FilterDevice(parameter, cvHelper->getImage(), _log));
+		if (_isAddNoise)
+		{
+			filter->generateNoise(_percentNoise / 100.0F);
+			cvHelper->imageShow("Noised image", filter->getFrame(), WINDOW_NORMAL);
+		}
+		filter->compute();
+		cvHelper->imageShow("Device algorithm", filter->getFrame(), WINDOW_NORMAL);
+	}
 }

@@ -5,6 +5,7 @@
 #include <CL/cl.hpp>
 #include <vector>
 #include <string>
+#include "chrono"
 
 class FilterDevice : public Filter
 {
@@ -18,9 +19,12 @@ public:
 	std::vector<std::string> getDevices();
 	virtual ~FilterDevice();
 private:
+	void programBuild();
 private:
 	std::vector<cl::Platform> _platforms;
 	std::vector<cl::Device> _devices;
 	size_t _activeDevice = 0;
+	cl::Program _program;
+	cl::Context _context;
 };
 

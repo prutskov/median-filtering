@@ -8,7 +8,6 @@
 #include "FilterHost.h"
 #include "FilterDevice.h"
 #include "Log.h"
-#include "chrono"
 
 // Диалоговое окно CMedianFilteringDlg
 class CMedianFilteringDlg : public CDialogEx
@@ -47,4 +46,5 @@ public:
 
 	CVHelper* cvHelper;
 	Log *_log;
+	int _acceleratorType;
 };
