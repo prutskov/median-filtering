@@ -34,6 +34,7 @@ void CMedianFilteringDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Radio(pDX, IDC_RADIO_MASK3, _maskType);
 	DDX_Control(pDX, IDC_LOG, _logElement);
 	DDX_Radio(pDX, IDC_ACC_HOST, _acceleratorType);
+	DDX_Control(pDX, IDC_COMBO1, _devicesNames);
 }
 
 BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
@@ -59,6 +60,19 @@ BOOL CMedianFilteringDlg::OnInitDialog()
 	srand(static_cast<uint>(time(NULL)));
 	_log = new Log(&_logElement);
 	cvHelper = new CVHelper(_log);
+
+	filterHost = std::shared_ptr<FilterHost>(new FilterHost(_log));
+	filterDevice = std::shared_ptr<FilterDevice>(new FilterDevice(_log));
+
+	auto devices = filterDevice->getDevices();
+	for (int i = 0; i < devices.size(); i++)
+	{
+		CString str(devices[i].c_str());
+		_devicesNames.AddString(str);
+	}
+
+	_devicesNames.SetCurSel(0);
+
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления
 }
 
@@ -128,8 +142,7 @@ void CMedianFilteringDlg::OnBnClickedOpenImage()
 void CMedianFilteringDlg::OnBnClickedFilter()
 {
 	UpdateData(TRUE);
-	Parameter parameter = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
-
+	
 	if (cvHelper->isNullImage())
 	{
 		_log->add("Image is null. Load image for continue...");
@@ -137,27 +150,54 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 		return;
 	}
 
-	std::shared_ptr<Filter> filter;
 	if (_acceleratorType == 0)
 	{
-		filter = std::shared_ptr<FilterHost>(new FilterHost(parameter, cvHelper->getImage(), _log));
+		Parameter parameter = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
+		filterHost->setParameter(parameter);
+		filterHost->setFrame(cvHelper->getImage());
+
+		_log->add(L"Selected host.");
+		if (parameter.mask == Mask::MASK3X3)
+		{
+			_log->add("Mask: 3x3");
+		}
+		else
+		{
+			_log->add("Mask: 5x5");
+		}
+
+
 		if (_isAddNoise)
 		{
-			filter->generateNoise(_percentNoise / 100.0F);
-			cvHelper->imageShow("Noised image", filter->getFrame(), WINDOW_NORMAL);
+			filterHost->generateNoise(_percentNoise / 100.0F);
+			cvHelper->imageShow("Noised image", filterHost->getFrame(), WINDOW_NORMAL);
 		}
-		filter->compute();
-		cvHelper->imageShow("Filtered image", filter->getFrame(), WINDOW_NORMAL);
+		filterHost->compute();
+		cvHelper->imageShow("Host algorithm.", filterHost->getFrame(), WINDOW_NORMAL);
 	}
 	else if (_acceleratorType == 1)
 	{
-		filter = std::shared_ptr<FilterDevice>(new FilterDevice(parameter, cvHelper->getImage(), _log));
+		ParameterDevice parameterDev;
+		parameterDev.mask = _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5;
+		parameterDev.activeDevice = _devicesNames.GetCurSel();
+
+		filterDevice->setParameter(parameterDev);
+		filterDevice->setFrame(cvHelper->getImage());
+		
+		CString str;
+		_devicesNames.GetLBText(parameterDev.activeDevice, str);
+
+		_log->add(L"Selected device: " + std::wstring(str));
+		if (parameterDev.mask == Mask::MASK3X3)
+		{
+			_log->add("Mask: 3x3");
+		}
 		if (_isAddNoise)
 		{
-			filter->generateNoise(_percentNoise / 100.0F);
-			cvHelper->imageShow("Noised image", filter->getFrame(), WINDOW_NORMAL);
+			filterDevice->generateNoise(_percentNoise / 100.0F);
+			cvHelper->imageShow("Noised image", filterDevice->getFrame(), WINDOW_NORMAL);
 		}
-		filter->compute();
-		cvHelper->imageShow("Device algorithm", filter->getFrame(), WINDOW_NORMAL);
+		filterDevice->compute();
+		cvHelper->imageShow("Device algorithm. ", filterDevice->getFrame(), WINDOW_NORMAL);
 	}
 }

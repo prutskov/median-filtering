@@ -10,11 +10,9 @@
 class FilterDevice : public Filter
 {
 public:
-	FilterDevice(const Parameter &parameter, const Frame &frame, Log *log);
+	FilterDevice(Log *log);
 	void compute() override;
-
-	/*Set device with numDevice number as active for computing*/
-	void activateDevice(const size_t &numDevice);
+	void setParameter(ParameterDevice parameter);
 	/*Get vector of available devices*/
 	std::vector<std::string> getDevices();
 	virtual ~FilterDevice();
@@ -23,8 +21,8 @@ private:
 private:
 	std::vector<cl::Platform> _platforms;
 	std::vector<cl::Device> _devices;
-	size_t _activeDevice = 1;
 	cl::Program _program;
 	cl::Context _context;
+	ParameterDevice _parameter;
 };
 

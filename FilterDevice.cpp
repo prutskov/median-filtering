@@ -2,8 +2,7 @@
 #include "FilterDevice.h"
 #include <fstream>
 
-FilterDevice::FilterDevice(const Parameter & parameter, const Frame & frame, Log *log)
-	: Filter(parameter, frame, log)
+FilterDevice::FilterDevice(Log * log) : Filter(log)
 {
 	_platforms.clear();
 	_devices.clear();
@@ -18,8 +17,6 @@ FilterDevice::FilterDevice(const Parameter & parameter, const Frame & frame, Log
 		plat.getDevices(CL_DEVICE_TYPE_ALL, &device);
 		_devices.insert(_devices.end(), device.begin(), device.end());
 	}
-
-	programBuild();
 }
 
 void FilterDevice::compute()
@@ -54,17 +51,17 @@ void FilterDevice::compute()
 
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
-	_log->add("Filter: Device algorithm. Timing: " + std::to_string(duration) + " ms");
+	_log->add(L"Filter: Device algorithm. Timing: " + std::to_wstring(duration) + L" ms");
 	_frame = result;
 
 }
 
-
-void FilterDevice::activateDevice(const size_t &numDevice)
+void FilterDevice::setParameter(ParameterDevice parameter)
 {
-	_activeDevice = numDevice;
-	_log->add("Selected OpenCL device: " + _devices[_activeDevice].getInfo<CL_DEVICE_NAME>());
+	_parameter = parameter;
+	programBuild();
 }
+
 
 FilterDevice::~FilterDevice()
 {
@@ -72,7 +69,8 @@ FilterDevice::~FilterDevice()
 
 void FilterDevice::programBuild()
 {
-	std::vector<cl::Device> device = { _devices[_activeDevice] };
+	auto activeDevice = static_cast<ParameterDevice*>(&_parameter)->activeDevice;
+	std::vector<cl::Device> device = { _devices[activeDevice] };
 	cl::Context context(device);
 	_context = context;
 
@@ -87,7 +85,7 @@ void FilterDevice::programBuild()
 	}
 	catch (const cl::Error &err)
 	{
-		_log->add("Build error: " + _program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(_context.getInfo<CL_CONTEXT_DEVICES>()[0]));
+		_log->add(std::string(err.what())+ ": " + _program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(_context.getInfo<CL_CONTEXT_DEVICES>()[0]));
 	}
 }
 

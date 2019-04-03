@@ -2,9 +2,9 @@
 #include "FilterHost.h"
 #include <ctime>
 
-FilterHost::FilterHost(const Parameter &parameter, const Frame &frame, Log *log)
-	: Filter(parameter, frame, log)
-{}
+FilterHost::FilterHost(Log * log) : Filter(log)
+{
+}
 
 FilterHost::~FilterHost()
 {
@@ -23,7 +23,12 @@ void FilterHost::compute()
 	}
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
-	_log->add("Filter: Host algorithm. Timing: " + std::to_string(duration) + " ms");
+	_log->add(L"Filter: Host algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+}
+
+void FilterHost::setParameter(Parameter parameter)
+{
+	_parameter = parameter;
 }
 
 void FilterHost::quickSort(float* data, int size)

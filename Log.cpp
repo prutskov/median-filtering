@@ -2,7 +2,7 @@
 #include "Log.h"
 
 
-Log::Log() : _text(""), _logElement(nullptr)
+Log::Log() : _text(L""), _logElement(nullptr)
 {
 }
 
@@ -17,21 +17,29 @@ Log::~Log()
 
 }
 
+void Log::add(std::wstring text)
+{
+	_text += L"["+std::to_wstring(numRow)+L"]>>" + text+ L"\r\n";
+	//std::wstring textW = stringToWstring(_text);
+	_logElement->SetWindowTextW((LPCTSTR)_text.c_str());
+	numRow++;
+}
+
 void Log::add(std::string text)
 {
-	_text += "["+std::to_string(numRow)+"]>>" + text+ "\r\n";
-	std::wstring textW = stringToWstring(_text);
-	_logElement->SetWindowTextW((LPCTSTR)textW.c_str());
+	std::wstring textW = stringToWstring(text);
+	_text += L"[" + std::to_wstring(numRow) + L"]>>" + textW + L"\r\n";	
+	_logElement->SetWindowTextW((LPCTSTR)_text.c_str());
 	numRow++;
 }
 
 void Log::clear()
 {
 	_text.clear();
-	_text = "";
+	_text = L"";
 }
 
-std::string Log::getText()
+std::wstring Log::getText()
 {
 	return _text;
 }

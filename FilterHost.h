@@ -4,12 +4,14 @@
 class FilterHost :	public Filter
 {
 public:
-	FilterHost(const Parameter &parameter, const Frame &frame, Log *log);
+	FilterHost(Log *log);
 	void compute() override;
+	void setParameter(Parameter parameter);
 	virtual ~FilterHost();
 private:
 	void quickSort(float* data, int size);
 	void compute3x3();
 	void compute5x5();
+	Parameter _parameter;
 };
 

@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Filter.h"
 
-Filter::Filter(const Parameter & parameter, const Frame & frame, Log* log) 
-	: _parameter(parameter), _frame(frame), _log(log)
+
+Filter::Filter(Log * log) : _log(log)
 {
 }
 
@@ -31,4 +31,10 @@ void Filter::generateNoise(float percent)
 		_frame.dataPtr[i*nCols + j] = static_cast<float>(rand() % 2);
 		k++;
 	}
+}
+
+std::vector<std::string> Filter::getDevices()
+{
+	std::vector<std::string> devices = { "degault" };
+	return devices;
 }
