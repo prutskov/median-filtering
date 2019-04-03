@@ -74,7 +74,7 @@ void FilterDevice::programBuild()
 	cl::Context context(device);
 	_context = context;
 
-	std::ifstream sourceFile("kernel.cl");
+	std::ifstream sourceFile("nativeKernel.cl");
 	std::string sourceCode(std::istreambuf_iterator<char>(sourceFile), (std::istreambuf_iterator<char>()));
 	cl::Program::Sources source(1, std::make_pair(sourceCode.c_str(), sourceCode.length() + 1));
 	_program = cl::Program(_context, source);
