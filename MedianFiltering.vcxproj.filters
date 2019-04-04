@@ -84,7 +84,7 @@
     <None Include="nativeKernel.cl">
       <Filter>Исходные файлы</Filter>
     </None>
-    <None Include="kernel.cl">
+    <None Include="nativeBitonic.cl">
       <Filter>Исходные файлы</Filter>
     </None>
   </ItemGroup>
