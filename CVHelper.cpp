@@ -48,16 +48,17 @@ Frame CVHelper::convertToPtr(Mat data)
 	const int nCols = data.cols;
 
 	Frame frame(nRows, nCols,
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
 		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
-
-	Mat_<uchar> floatData;
-	data.convertTo(floatData, CV_8U);
-
+	
 	for (int i = 0; i < nRows; i++)
 	{
 		for (int j = 0; j < nCols; j++)
 		{
-			frame.dataPtr[i*nCols + j] = floatData.ptr<uchar>(i)[j];
+			frame.dataBPtr[i*nCols + j] = data.at<Vec3b>(i, j)[0];
+			frame.dataGPtr[i*nCols + j] = data.at<Vec3b>(i, j)[1];
+			frame.dataRPtr[i*nCols + j] = data.at<Vec3b>(i, j)[2];
 		}
 	}
 
@@ -69,7 +70,17 @@ Mat CVHelper::convertToMat(Frame data)
 	const int nRows = data.nRows;
 	const int nCols = data.nCols;
 
-	cv::Mat_<uchar> mat(nRows, nCols, data.dataPtr.get());
+	Mat mat(nRows, nCols, CV_8UC3);
+
+	for (int i = 0; i < nRows; i++)
+	{
+		for (int j = 0; j < nCols; j ++)
+		{
+			mat.at<Vec3b>(i, j)[0] = data.dataBPtr[i*nCols + j];
+			mat.at<Vec3b>(i, j)[1] = data.dataGPtr[i*nCols + j];
+			mat.at<Vec3b>(i, j)[2] = data.dataRPtr[i*nCols + j];
+		}
+	}
 
 	return mat.clone();
 }

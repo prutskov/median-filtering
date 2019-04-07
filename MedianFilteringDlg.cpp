@@ -126,7 +126,7 @@ void CMedianFilteringDlg::loadImage()
 		CString pathBMP = fd.GetPathName();
 		CT2CA pathBuf(pathBMP);
 		std::string str(pathBuf);
-		cvHelper->loadImage(str, IMREAD_GRAYSCALE);
+		cvHelper->loadImage(str, IMREAD_COLOR);
 		cvHelper->imageShow(WINDOW_NORMAL);
 	}
 }
@@ -136,6 +136,8 @@ void CMedianFilteringDlg::loadImage()
 void CMedianFilteringDlg::OnBnClickedOpenImage()
 {
 	loadImage();
+	Frame image = cvHelper->getImage();
+	cvHelper->imageShow("Converted", image, WINDOW_NORMAL);
 }
 
 

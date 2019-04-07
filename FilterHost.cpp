@@ -41,6 +41,8 @@ void FilterHost::compute3x3()
 	const int nRows = _frame.nRows - 2;
 	const int nCols = _frame.nCols - 2;
 	Frame result(nRows, nCols,
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
 		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
 
 	/*Get median*/
@@ -56,7 +58,7 @@ void FilterHost::compute3x3()
 		uchar matrixForSorting[maskSize];
 		for (int i = 0; i < maskSize; i++)
 		{
-			matrixForSorting[i] = frame.dataPtr[indexes[i]];
+			matrixForSorting[i] = frame.dataRPtr[indexes[i]];
 		}
 
 		/*Sorting array*/
@@ -71,7 +73,7 @@ void FilterHost::compute3x3()
 	{
 		for (int j = 0; j < nCols; j++)
 		{
-			result.dataPtr[i*nCols + j] = median(j + 1, i + 1, _frame);
+			result.dataRPtr[i*nCols + j] = median(j + 1, i + 1, _frame);
 		}
 	}
 
@@ -83,6 +85,8 @@ void FilterHost::compute5x5()
 	const int nRows = _frame.nRows - 4;
 	const int nCols = _frame.nCols - 4;
 	Frame result(nRows, nCols,
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
 		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
 
 	/*Get median*/
@@ -120,7 +124,7 @@ void FilterHost::compute5x5()
 		uchar matrixForSorting[maskSize];
 		for (int i = 0; i < maskSize; i++)
 		{
-			matrixForSorting[i] = frame.dataPtr[indexes[i]];
+			matrixForSorting[i] = frame.dataRPtr[indexes[i]];
 		}
 
 		/*Sorting array*/
@@ -135,7 +139,7 @@ void FilterHost::compute5x5()
 	{
 		for (int j = 0; j < nCols; j++)
 		{
-			result.dataPtr[i*nCols + j] = median(j + 2, i + 2, _frame);
+			result.dataRPtr[i*nCols + j] = median(j + 2, i + 2, _frame);
 		}
 	}
 

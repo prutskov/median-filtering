@@ -28,7 +28,9 @@ void Filter::generateNoise(float percent)
 		const int i = rand() % nRows;
 		const int j = rand() % nCols;
 
-		_frame.dataPtr[i*nCols + j] = static_cast<uchar>(rand() % 2 * 255);
+		_frame.dataRPtr[i*nCols + j] = static_cast<uchar>(rand() % 2 * 255);
+		_frame.dataBPtr[i*nCols + j] = static_cast<uchar>(rand() % 2 * 255);
+		_frame.dataGPtr[i*nCols + j] = static_cast<uchar>(rand() % 2 * 255);
 		k++;
 	}
 }

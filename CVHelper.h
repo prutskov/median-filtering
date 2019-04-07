@@ -12,15 +12,22 @@ struct Frame
 {
 	Frame() : nRows(0), nCols(0)
 	{
-		dataPtr = std::shared_ptr<uchar[]>(nullptr);
+		dataRPtr = std::shared_ptr<uchar[]>(nullptr);
+		dataGPtr = std::shared_ptr<uchar[]>(nullptr);
+		dataBPtr = std::shared_ptr<uchar[]>(nullptr);
 	}
-	Frame(const int rows, const int cols, std::shared_ptr<uchar[]> data) : nRows(rows), nCols(cols)
+	Frame(const int rows, const int cols, std::shared_ptr<uchar[]> dataR,
+		std::shared_ptr<uchar[]> dataG, std::shared_ptr<uchar[]> dataB) : nRows(rows), nCols(cols)
 	{
-		dataPtr = data;
+		dataRPtr = dataR;
+		dataGPtr = dataG;
+		dataBPtr = dataB;
 	}
 
-	/*Pointer to float data in [0..1]*/
-	std::shared_ptr<uchar[]> dataPtr;
+	/*Pointer to uchar Red data in [0..255]*/
+	std::shared_ptr<uchar[]> dataRPtr;
+	std::shared_ptr<uchar[]> dataGPtr;
+	std::shared_ptr<uchar[]> dataBPtr;
 	int nRows;
 	int nCols;
 };
