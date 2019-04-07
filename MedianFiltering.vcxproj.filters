@@ -87,6 +87,9 @@
     <None Include="nativeBitonic.cl">
       <Filter>Исходные файлы</Filter>
     </None>
+    <None Include="kernel.cl">
+      <Filter>Исходные файлы</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\MedianFiltering.ico">

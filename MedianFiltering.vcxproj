@@ -229,6 +229,7 @@
     <ResourceCompile Include="MedianFiltering.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="kernel.cl" />
     <None Include="nativeBitonic.cl" />
     <None Include="nativeKernel.cl" />
     <None Include="res\MedianFiltering.rc2" />

@@ -20,29 +20,16 @@ inline void bitonicSort(float* a, int size)
 
 inline float getMedian(const int x, const int y, const int nRows, const int nCols, const __global float* data)
 {
-	/*Indexes from original frame for mask*/
-	int indexes[9] = { (y - 1)*nCols + x - 1,
-					   (y - 1)*nCols + x, 
-					   (y - 1)*nCols + x + 1,
-							 y*nCols + x - 1,
-						     y*nCols + x,
-							 y*nCols + x + 1,
-					   (y + 1)*nCols + x - 1,
-					   (y + 1)*nCols + x,
-					   (y + 1)*nCols + x + 1 };
-
-	/*Get submatrix from filter-mask*/
-	float matrixForSorting[9];
-	for (int i = 0; i < 9; i++)
-	{
-		matrixForSorting[i] = data[indexes[i]];
-	}
+	float temp[9] = {};
+	for (int row = 0; row < 3; ++row)
+		for (int col = 0; col < 3; ++col)
+			temp[row*3 + col] = data[(y - 1 + row)*nCols + x - 1 + col];
 
 	/*Sorting array*/
-	bitonicSort(matrixForSorting, 9);
+	bitonicSort(temp, 9);
 
 	/*Return median*/
-	return matrixForSorting[4];
+	return temp[4];
 }
 
 __kernel void nativeFilter3x3(const int nRows, const int nCols,
@@ -51,5 +38,5 @@ __kernel void nativeFilter3x3(const int nRows, const int nCols,
 	int rowIdx = get_global_id(0);
 	int colIdx = get_global_id(1);
 
-	imageOut[rowIdx*nCols + colIdx] = getMedian(colIdx + 1, rowIdx + 1, nRows + 2, nCols + 2, imageIn);
+	imageOut[rowIdx*nCols + colIdx] = getMedian(colIdx+1, rowIdx+1, nRows + 2, nCols + 2, imageIn);
 }
