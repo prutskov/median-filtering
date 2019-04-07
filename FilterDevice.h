@@ -18,6 +18,8 @@ public:
 	virtual ~FilterDevice();
 private:
 	void programBuild();
+	void compute3x3();
+	void compute5x5();
 private:
 	std::vector<cl::Platform> _platforms;
 	std::vector<cl::Device> _devices;

@@ -87,6 +87,58 @@ void FilterHost::median3x3(int x, int y, const Frame& frame, Frame& result, int 
 	result.dataBPtr[indexRes] = matrixForSortingB[4];
 }
 
+void FilterHost::median5x5(int x, int y, const Frame& frame, Frame& result, int indexRes)
+{
+	const int maskSize = 25;
+	/*Indexes from original frame for mask*/
+	int indexes[maskSize] = { (y - 2)*frame.nCols + x - 2,
+						(y - 2)*frame.nCols + x - 1,
+						(y - 2)*frame.nCols + x,
+						(y - 2)*frame.nCols + x + 1,
+						(y - 2)*frame.nCols + x + 2,
+						(y - 1)*frame.nCols + x - 2,
+						(y - 1)*frame.nCols + x - 1,
+						(y - 1)*frame.nCols + x,
+						(y - 1)*frame.nCols + x + 1,
+						(y - 1)*frame.nCols + x + 2,
+							  y*frame.nCols + x - 2,
+							  y*frame.nCols + x - 1,
+							  y*frame.nCols + x,
+							  y*frame.nCols + x + 1,
+							  y*frame.nCols + x + 2,
+						(y + 1)*frame.nCols + x - 2,
+						(y + 1)*frame.nCols + x - 1,
+						(y + 1)*frame.nCols + x,
+						(y + 1)*frame.nCols + x + 1,
+						(y + 1)*frame.nCols + x + 2,
+						(y + 2)*frame.nCols + x - 2,
+						(y + 2)*frame.nCols + x - 1,
+						(y + 2)*frame.nCols + x,
+						(y + 2)*frame.nCols + x + 1,
+						(y + 2)*frame.nCols + x + 2 };
+
+	/*Get submatrix from filter-mask*/
+	uchar matrixForSortingR[maskSize];
+	uchar matrixForSortingG[maskSize];
+	uchar matrixForSortingB[maskSize];
+
+	for (int i = 0; i < maskSize; i++)
+	{
+		matrixForSortingR[i] = frame.dataRPtr[indexes[i]];
+		matrixForSortingG[i] = frame.dataGPtr[indexes[i]];
+		matrixForSortingB[i] = frame.dataBPtr[indexes[i]];
+	}
+
+	/*Sorting array*/
+	quickSort(matrixForSortingR, maskSize);
+	quickSort(matrixForSortingG, maskSize);
+	quickSort(matrixForSortingB, maskSize);
+
+	result.dataRPtr[indexRes] = matrixForSortingR[12];
+	result.dataGPtr[indexRes] = matrixForSortingG[12];
+	result.dataBPtr[indexRes] = matrixForSortingB[12];
+}
+
 void FilterHost::compute5x5()
 {
 	const int nRows = _frame.nRows - 4;
@@ -96,57 +148,14 @@ void FilterHost::compute5x5()
 		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
 		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
 
-	/*Get median*/
-	auto median = [&](int x, int y, const Frame& frame)->uchar
-	{
-		const int maskSize = 25;
-		/*Indexes from original frame for mask*/
-		int indexes[maskSize] = { (y - 2)*frame.nCols + x - 2,
-							(y - 2)*frame.nCols + x - 1,
-							(y - 2)*frame.nCols + x,
-							(y - 2)*frame.nCols + x + 1,
-							(y - 2)*frame.nCols + x + 2,
-							(y - 1)*frame.nCols + x - 2,
-							(y - 1)*frame.nCols + x - 1,
-							(y - 1)*frame.nCols + x,
-							(y - 1)*frame.nCols + x + 1,
-							(y - 1)*frame.nCols + x + 2,
-								  y*frame.nCols + x - 2, 
-								  y*frame.nCols + x - 1, 
-								  y*frame.nCols + x,
-								  y*frame.nCols + x + 1,
-								  y*frame.nCols + x + 2,
-							(y + 1)*frame.nCols + x - 2,
-							(y + 1)*frame.nCols + x - 1,
-							(y + 1)*frame.nCols + x,
-							(y + 1)*frame.nCols + x + 1,
-							(y + 1)*frame.nCols + x + 2,
-							(y + 2)*frame.nCols + x - 2,
-							(y + 2)*frame.nCols + x - 1,
-							(y + 2)*frame.nCols + x,
-							(y + 2)*frame.nCols + x + 1,
-							(y + 2)*frame.nCols + x + 2 };
-
-		/*Get submatrix from filter-mask*/
-		uchar matrixForSorting[maskSize];
-		for (int i = 0; i < maskSize; i++)
-		{
-			matrixForSorting[i] = frame.dataRPtr[indexes[i]];
-		}
-
-		/*Sorting array*/
-		quickSort(matrixForSorting, maskSize);
-
-		/*Return median*/
-		return matrixForSorting[maskSize/2];
-	};
+	
 
 #pragma omp parallel for
 	for (int i = 0; i < nRows; i++)
 	{
 		for (int j = 0; j < nCols; j++)
 		{
-			result.dataRPtr[i*nCols + j] = median(j + 2, i + 2, _frame);
+			median5x5(j + 2, i + 2, _frame, result, i*nCols + j);
 		}
 	}
 
