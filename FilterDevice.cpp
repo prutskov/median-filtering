@@ -31,25 +31,47 @@ void FilterDevice::compute()
 	cl::CommandQueue comqueque(_context, _context.getInfo<CL_CONTEXT_DEVICES>()[0]);
 
 	auto start = std::chrono::high_resolution_clock::now();
-	cl::Buffer imageIn = cl::Buffer(_context,
+	cl::Buffer imageRIn = cl::Buffer(_context,
 		CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
 		(_frame.nRows*_frame.nCols) * sizeof(uchar), _frame.dataRPtr.get());
 
-	cl::Buffer imageOut = cl::Buffer(_context,
+	cl::Buffer imageGIn = cl::Buffer(_context,
+		CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+		(_frame.nRows*_frame.nCols) * sizeof(uchar), _frame.dataGPtr.get());
+
+	cl::Buffer imageBIn = cl::Buffer(_context,
+		CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+		(_frame.nRows*_frame.nCols) * sizeof(uchar), _frame.dataBPtr.get());
+		
+	cl::Buffer imageROut = cl::Buffer(_context,
 		CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
 		(result.nRows*result.nCols) * sizeof(uchar), result.dataRPtr.get());
+
+	cl::Buffer imageGOut = cl::Buffer(_context,
+		CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
+		(result.nRows*result.nCols) * sizeof(uchar), result.dataGPtr.get());
+
+	cl::Buffer imageBOut = cl::Buffer(_context,
+		CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
+		(result.nRows*result.nCols) * sizeof(uchar), result.dataGPtr.get());
 
 	cl::Kernel kernel(_program, "nativeFilter3x3");
 
 	kernel.setArg(0, result.nRows);
 	kernel.setArg(1, result.nCols);
-	kernel.setArg(2, imageIn);
-	kernel.setArg(3, imageOut);
+	kernel.setArg(2, imageRIn);
+	kernel.setArg(3, imageGIn);
+	kernel.setArg(4, imageBIn);
+	kernel.setArg(5, imageROut);
+	kernel.setArg(6, imageGOut);
+	kernel.setArg(7, imageBOut);
 
 	comqueque.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(result.nRows, result.nCols));
 	comqueque.finish();
 
-	comqueque.enqueueReadBuffer(imageOut, CL_TRUE, 0, result.nRows*result.nCols * sizeof(uchar), result.dataRPtr.get());
+	comqueque.enqueueReadBuffer(imageROut, CL_TRUE, 0, result.nRows*result.nCols * sizeof(uchar), result.dataRPtr.get());
+	comqueque.enqueueReadBuffer(imageGOut, CL_TRUE, 0, result.nRows*result.nCols * sizeof(uchar), result.dataGPtr.get());
+	comqueque.enqueueReadBuffer(imageBOut, CL_TRUE, 0, result.nRows*result.nCols * sizeof(uchar), result.dataBPtr.get());
 
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;

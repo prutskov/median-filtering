@@ -137,7 +137,6 @@ void CMedianFilteringDlg::OnBnClickedOpenImage()
 {
 	loadImage();
 	Frame image = cvHelper->getImage();
-	cvHelper->imageShow("Converted", image, WINDOW_NORMAL);
 }
 
 

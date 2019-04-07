@@ -18,38 +18,49 @@ inline void bitonicSort(uchar* a, int size)
 }
 
 
-inline float getMedian(const int x, const int y, const int nRows, const int nCols, const __global uchar* data)
+inline void getMedian(const int x, const int y, const int nRows, const int nCols, const int indexRes,
+	__global const uchar* imageRIn, __global const uchar* imageGIn, __global const uchar* imageBIn,
+	__global uchar* imageROut, __global uchar* imageGOut, __global uchar* imageBOut)
 {
 	/*Indexes from original frame for mask*/
 	int indexes[9] = { (y - 1)*nCols + x - 1,
-					   (y - 1)*nCols + x, 
+					   (y - 1)*nCols + x,
 					   (y - 1)*nCols + x + 1,
 							 y*nCols + x - 1,
-						     y*nCols + x,
+							 y*nCols + x,
 							 y*nCols + x + 1,
 					   (y + 1)*nCols + x - 1,
 					   (y + 1)*nCols + x,
 					   (y + 1)*nCols + x + 1 };
 
 	/*Get submatrix from filter-mask*/
-	uchar matrixForSorting[9];
+	uchar matrixForSortingR[9];
+	uchar matrixForSortingG[9];
+	uchar matrixForSortingB[9];
 	for (int i = 0; i < 9; i++)
 	{
-		matrixForSorting[i] = data[indexes[i]];
+		matrixForSortingR[i] = imageRIn[indexes[i]];
+		matrixForSortingG[i] = imageGIn[indexes[i]];
+		matrixForSortingB[i] = imageBIn[indexes[i]];
 	}
 
 	/*Sorting array*/
-	bitonicSort(matrixForSorting, 9);
+	bitonicSort(matrixForSortingR, 9);
+	bitonicSort(matrixForSortingG, 9);
+	bitonicSort(matrixForSortingB, 9);
 
-	/*Return median*/
-	return matrixForSorting[4];
+	imageROut[indexRes] = matrixForSortingR[4];
+	imageGOut[indexRes] = matrixForSortingG[4];
+	imageBOut[indexRes] = matrixForSortingB[4];
 }
 
 __kernel void nativeFilter3x3(const int nRows, const int nCols,
-	__global const uchar* imageIn, __global uchar* imageOut)
+	__global const uchar* imageRIn, __global const uchar* imageGIn, __global const uchar* imageBIn,
+	__global uchar* imageROut, __global uchar* imageGOut, __global uchar* imageBOut)
 {
 	int rowIdx = get_global_id(0);
 	int colIdx = get_global_id(1);
 
-	imageOut[rowIdx*nCols + colIdx] = getMedian(colIdx + 1, rowIdx + 1, nRows + 2, nCols + 2, imageIn);
+	getMedian(colIdx + 1, rowIdx + 1, nRows + 2, nCols + 2, rowIdx*nCols + colIdx, imageRIn, imageGIn, imageBIn,
+		imageROut, imageGOut, imageBOut);
 }

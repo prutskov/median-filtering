@@ -44,40 +44,47 @@ void FilterHost::compute3x3()
 		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
 		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
 		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
-
-	/*Get median*/
-	auto median = [&](int x, int y, const Frame& frame)->uchar
-	{
-		const int maskSize = 9;
-		/*Indexes from original frame for mask*/
-		int indexes[maskSize] = { (y - 1)*frame.nCols + x - 1, (y - 1)*frame.nCols + x, (y - 1)*frame.nCols + x + 1,
-						  y*frame.nCols + x - 1, y*frame.nCols + x, y*frame.nCols + x + 1,
-						  (y + 1)*frame.nCols + x - 1, (y + 1)*frame.nCols + x, (y + 1)*frame.nCols + x + 1 };
-
-		/*Get submatrix from filter-mask*/
-		uchar matrixForSorting[maskSize];
-		for (int i = 0; i < maskSize; i++)
-		{
-			matrixForSorting[i] = frame.dataRPtr[indexes[i]];
-		}
-
-		/*Sorting array*/
-		quickSort(matrixForSorting, maskSize);
-
-		/*Return median*/
-		return matrixForSorting[maskSize/2];
-	};
-
+	
 #pragma omp parallel for
 	for (int i = 0; i < nRows; i++)
 	{
 		for (int j = 0; j < nCols; j++)
 		{
-			result.dataRPtr[i*nCols + j] = median(j + 1, i + 1, _frame);
+			median3x3(j + 1, i + 1, _frame, result, i*nCols + j);
 		}
 	}
 
 	_frame = result;
+}
+
+void FilterHost::median3x3(int x, int y, const Frame& frame, Frame& result, int indexRes)
+{
+	const int maskSize = 9;
+	/*Indexes from original frame for mask*/
+	int indexes[maskSize] = { (y - 1)*frame.nCols + x - 1, (y - 1)*frame.nCols + x, (y - 1)*frame.nCols + x + 1,
+					  y*frame.nCols + x - 1, y*frame.nCols + x, y*frame.nCols + x + 1,
+					  (y + 1)*frame.nCols + x - 1, (y + 1)*frame.nCols + x, (y + 1)*frame.nCols + x + 1 };
+
+	/*Get submatrix from filter-mask*/
+	uchar matrixForSortingR[maskSize];
+	uchar matrixForSortingG[maskSize];
+	uchar matrixForSortingB[maskSize];
+
+	for (int i = 0; i < maskSize; i++)
+	{
+		matrixForSortingR[i] = frame.dataRPtr[indexes[i]];
+		matrixForSortingG[i] = frame.dataGPtr[indexes[i]];
+		matrixForSortingB[i] = frame.dataBPtr[indexes[i]];
+	}
+
+	/*Sorting array*/
+	quickSort(matrixForSortingR, maskSize);
+	quickSort(matrixForSortingG, maskSize);
+	quickSort(matrixForSortingB, maskSize);
+
+	result.dataRPtr[indexRes] = matrixForSortingR[4];
+	result.dataGPtr[indexRes] = matrixForSortingG[4];
+	result.dataBPtr[indexRes] = matrixForSortingB[4];
 }
 
 void FilterHost::compute5x5()
