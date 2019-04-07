@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_OPEN_IMAGE, &CMedianFilteringDlg::OnBnClickedOpenImage)
 	ON_BN_CLICKED(IDC_FILTER, &CMedianFilteringDlg::OnBnClickedFilter)
+	ON_BN_CLICKED(IDC_OPEN_VIDEO, &CMedianFilteringDlg::OnBnClickedOpenVideo)
 END_MESSAGE_MAP()
 
 
@@ -193,6 +194,11 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 		{
 			_log->add("Mask: 3x3");
 		}
+		else
+		{
+			_log->add("Mask: 5x5");
+		}
+
 		if (_isAddNoise)
 		{
 			filterDevice->generateNoise(_percentNoise / 100.0F);
@@ -201,4 +207,66 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 		filterDevice->compute();
 		cvHelper->imageShow("Device algorithm. ", filterDevice->getFrame(), WINDOW_NORMAL);
 	}
+}
+
+
+void CMedianFilteringDlg::OnBnClickedOpenVideo()
+{
+	UpdateData(TRUE);
+	VideoCapture video(0);
+	if(!video.isOpened())
+	{
+		_log->add("Camera don't opened.");
+		return;
+	}
+
+	namedWindow("Video", 1);
+	if (_acceleratorType == 0)
+	{
+		Parameter parameter = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
+		filterHost->setParameter(parameter);
+
+		_log->add(L"Selected host.");
+		if (parameter.mask == Mask::MASK3X3)
+		{
+			_log->add("Mask: 3x3");
+		}
+		else
+		{
+			_log->add("Mask: 5x5");
+		}
+
+		for (;;)
+		{
+			Mat frame;
+			video >> frame; // get a new frame from camera  
+			filterHost->setFrame(cvHelper->convertToPtr(frame.clone()));
+			filterHost->compute();
+			Frame frameFiltered = filterHost->getFrame();
+			imshow("Video", cvHelper->convertToMat(frameFiltered));
+			if (waitKey(30) >= 0) break;
+		}
+	}
+	else if (_acceleratorType == 1)
+	{
+		ParameterDevice parameterDev;
+		parameterDev.mask = _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5;
+		parameterDev.activeDevice = _devicesNames.GetCurSel();
+
+		filterDevice->setParameter(parameterDev);
+
+		CString str;
+		_devicesNames.GetLBText(parameterDev.activeDevice, str);
+
+		_log->add(L"Selected device: " + std::wstring(str));
+		if (parameterDev.mask == Mask::MASK3X3)
+		{
+			_log->add("Mask: 3x3");
+		}
+		else
+		{
+			_log->add("Mask: 5x5");
+		}
+	}
+	
 }

@@ -52,4 +52,5 @@ public:
 
 	int _acceleratorType;
 	CComboBox _devicesNames;
+	afx_msg void OnBnClickedOpenVideo();
 };
