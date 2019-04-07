@@ -31,7 +31,7 @@ void FilterHost::setParameter(Parameter parameter)
 	_parameter = parameter;
 }
 
-void FilterHost::quickSort(float* data, int size)
+void FilterHost::quickSort(uchar* data, int size)
 {
 	std::sort(data, data + size);
 }
@@ -41,10 +41,10 @@ void FilterHost::compute3x3()
 	const int nRows = _frame.nRows - 2;
 	const int nCols = _frame.nCols - 2;
 	Frame result(nRows, nCols,
-		std::shared_ptr<float[]>(new float[nRows*nCols], std::default_delete<float[]>()));
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
 
 	/*Get median*/
-	auto median = [&](int x, int y, const Frame& frame)->float
+	auto median = [&](int x, int y, const Frame& frame)->uchar
 	{
 		const int maskSize = 9;
 		/*Indexes from original frame for mask*/
@@ -53,7 +53,7 @@ void FilterHost::compute3x3()
 						  (y + 1)*frame.nCols + x - 1, (y + 1)*frame.nCols + x, (y + 1)*frame.nCols + x + 1 };
 
 		/*Get submatrix from filter-mask*/
-		float matrixForSorting[maskSize];
+		uchar matrixForSorting[maskSize];
 		for (int i = 0; i < maskSize; i++)
 		{
 			matrixForSorting[i] = frame.dataPtr[indexes[i]];
@@ -83,10 +83,10 @@ void FilterHost::compute5x5()
 	const int nRows = _frame.nRows - 4;
 	const int nCols = _frame.nCols - 4;
 	Frame result(nRows, nCols,
-		std::shared_ptr<float[]>(new float[nRows*nCols], std::default_delete<float[]>()));
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
 
 	/*Get median*/
-	auto median = [&](int x, int y, const Frame& frame)->float
+	auto median = [&](int x, int y, const Frame& frame)->uchar
 	{
 		const int maskSize = 25;
 		/*Indexes from original frame for mask*/
@@ -117,7 +117,7 @@ void FilterHost::compute5x5()
 							(y + 2)*frame.nCols + x + 2 };
 
 		/*Get submatrix from filter-mask*/
-		float matrixForSorting[maskSize];
+		uchar matrixForSorting[maskSize];
 		for (int i = 0; i < maskSize; i++)
 		{
 			matrixForSorting[i] = frame.dataPtr[indexes[i]];

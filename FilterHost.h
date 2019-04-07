@@ -9,7 +9,7 @@ public:
 	void setParameter(Parameter parameter);
 	virtual ~FilterHost();
 private:
-	void quickSort(float* data, int size);
+	void quickSort(uchar* data, int size);
 	void compute3x3();
 	void compute5x5();
 	Parameter _parameter;

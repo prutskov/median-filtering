@@ -1,11 +1,11 @@
-inline void sortPair(float *a, float *b)
+inline void sortPair(uchar *a, uchar *b)
 {
-	float tmp = *a;
-	*a = fmin(tmp, *b);
-	*b = fmax(tmp, *b);
+	uchar tmp = *a;
+	*a = min(tmp, *b);
+	*b = max(tmp, *b);
 }
 
-inline void bitonicSort(float* a, int size)
+inline void bitonicSort(uchar* a, int size)
 {
 
 	sortPair(a + 1, a + 2); sortPair(a + 4, a + 5); sortPair(a + 7, a + 8);
@@ -18,7 +18,7 @@ inline void bitonicSort(float* a, int size)
 }
 
 
-inline float getMedian(const int x, const int y, const int nRows, const int nCols, const __global float* data)
+inline float getMedian(const int x, const int y, const int nRows, const int nCols, const __global uchar* data)
 {
 	/*Indexes from original frame for mask*/
 	int indexes[9] = { (y - 1)*nCols + x - 1,
@@ -32,7 +32,7 @@ inline float getMedian(const int x, const int y, const int nRows, const int nCol
 					   (y + 1)*nCols + x + 1 };
 
 	/*Get submatrix from filter-mask*/
-	float matrixForSorting[9];
+	uchar matrixForSorting[9];
 	for (int i = 0; i < 9; i++)
 	{
 		matrixForSorting[i] = data[indexes[i]];
@@ -46,7 +46,7 @@ inline float getMedian(const int x, const int y, const int nRows, const int nCol
 }
 
 __kernel void nativeFilter3x3(const int nRows, const int nCols,
-	__global const float* imageIn, __global float* imageOut)
+	__global const uchar* imageIn, __global uchar* imageOut)
 {
 	int rowIdx = get_global_id(0);
 	int colIdx = get_global_id(1);

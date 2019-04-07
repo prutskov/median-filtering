@@ -48,16 +48,16 @@ Frame CVHelper::convertToPtr(Mat data)
 	const int nCols = data.cols;
 
 	Frame frame(nRows, nCols,
-		std::shared_ptr<float[]>(new float[nRows*nCols], std::default_delete<float[]>()));
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
 
-	Mat_<float> floatData;
-	data.convertTo(floatData, CV_32F);
+	Mat_<uchar> floatData;
+	data.convertTo(floatData, CV_8U);
 
 	for (int i = 0; i < nRows; i++)
 	{
 		for (int j = 0; j < nCols; j++)
 		{
-			frame.dataPtr[i*nCols + j] = floatData.ptr<float>(i)[j] / 255.0F;
+			frame.dataPtr[i*nCols + j] = floatData.ptr<uchar>(i)[j];
 		}
 	}
 
@@ -69,7 +69,7 @@ Mat CVHelper::convertToMat(Frame data)
 	const int nRows = data.nRows;
 	const int nCols = data.nCols;
 
-	cv::Mat_<float> mat(nRows, nCols, data.dataPtr.get());
+	cv::Mat_<uchar> mat(nRows, nCols, data.dataPtr.get());
 
 	return mat.clone();
 }

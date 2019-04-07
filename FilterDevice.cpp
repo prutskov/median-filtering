@@ -24,18 +24,18 @@ void FilterDevice::compute()
 	const int nRows = _frame.nRows - 2;
 	const int nCols = _frame.nCols - 2;
 	Frame result(nRows, nCols,
-		std::shared_ptr<float[]>(new float[nRows*nCols], std::default_delete<float[]>()));
+		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
 
 	cl::CommandQueue comqueque(_context, _context.getInfo<CL_CONTEXT_DEVICES>()[0]);
 
 	auto start = std::chrono::high_resolution_clock::now();
 	cl::Buffer imageIn = cl::Buffer(_context,
 		CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-		(_frame.nRows*_frame.nCols) * sizeof(float), _frame.dataPtr.get());
+		(_frame.nRows*_frame.nCols) * sizeof(uchar), _frame.dataPtr.get());
 
 	cl::Buffer imageOut = cl::Buffer(_context,
 		CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-		(result.nRows*result.nCols) * sizeof(float), result.dataPtr.get());
+		(result.nRows*result.nCols) * sizeof(uchar), result.dataPtr.get());
 
 	cl::Kernel kernel(_program, "nativeFilter3x3");
 
@@ -47,7 +47,7 @@ void FilterDevice::compute()
 	comqueque.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(result.nRows, result.nCols));
 	comqueque.finish();
 
-	comqueque.enqueueReadBuffer(imageOut, CL_TRUE, 0, result.nRows*result.nCols * sizeof(float), result.dataPtr.get());
+	comqueque.enqueueReadBuffer(imageOut, CL_TRUE, 0, result.nRows*result.nCols * sizeof(uchar), result.dataPtr.get());
 
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
@@ -74,7 +74,7 @@ void FilterDevice::programBuild()
 	cl::Context context(device);
 	_context = context;
 
-	std::ifstream sourceFile("kernel.cl");
+	std::ifstream sourceFile("nativeBitonic.cl");
 	std::string sourceCode(std::istreambuf_iterator<char>(sourceFile), (std::istreambuf_iterator<char>()));
 	cl::Program::Sources source(1, std::make_pair(sourceCode.c_str(), sourceCode.length() + 1));
 	_program = cl::Program(_context, source);
