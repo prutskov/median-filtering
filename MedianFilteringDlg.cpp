@@ -174,7 +174,7 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 			filterHost->generateNoise(_percentNoise / 100.0F);
 			cvHelper->imageShow("Noised image", filterHost->getFrame(), WINDOW_NORMAL);
 		}
-		filterHost->compute();
+		filterHost->compute(true);
 		cvHelper->imageShow("Host algorithm.", filterHost->getFrame(), WINDOW_NORMAL);
 	}
 	else if (_acceleratorType == 1)
@@ -204,7 +204,7 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 			filterDevice->generateNoise(_percentNoise / 100.0F);
 			cvHelper->imageShow("Noised image", filterDevice->getFrame(), WINDOW_NORMAL);
 		}
-		filterDevice->compute();
+		filterDevice->compute(true);
 		cvHelper->imageShow("Device algorithm. ", filterDevice->getFrame(), WINDOW_NORMAL);
 	}
 }
@@ -242,7 +242,7 @@ void CMedianFilteringDlg::OnBnClickedOpenVideo()
 			video >> frame; // get a new frame from camera
 			cvHelper->imageShow("Camera:", frame, WINDOW_AUTOSIZE);
 			filterHost->setFrame(cvHelper->convertToPtr(frame.clone()));
-			filterHost->compute();
+			filterHost->compute(false);
 			Frame frameFiltered = filterHost->getFrame();
 			imshow("Filtered video", cvHelper->convertToMat(frameFiltered));
 			if (waitKey(30) >= 0) break;
@@ -276,7 +276,7 @@ void CMedianFilteringDlg::OnBnClickedOpenVideo()
 			filterDevice->setFrame(cvHelper->convertToPtr(frame.clone()));
 			filterDevice->generateNoise(_percentNoise / 100.0F);
 			cvHelper->imageShow("Camera:", filterDevice->getFrame(), WINDOW_NORMAL);
-			filterDevice->compute();
+			filterDevice->compute(false);
 			Frame frameFiltered = filterDevice->getFrame();
 			imshow("Filtered video", cvHelper->convertToMat(frameFiltered));
 			if (waitKey(30) >= 0) break;

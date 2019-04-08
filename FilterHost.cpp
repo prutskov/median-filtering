@@ -10,7 +10,7 @@ FilterHost::~FilterHost()
 {
 }
 
-void FilterHost::compute()
+void FilterHost::compute(bool isLogging)
 {
 	auto start = std::chrono::high_resolution_clock::now();
 	if (_parameter.mask == Mask::MASK3X3)
@@ -23,7 +23,10 @@ void FilterHost::compute()
 	}
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
-	_log->add(L"Filter: Host algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+	if (isLogging)
+	{
+		_log->add(L"Filter: Host algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+	}
 }
 
 void FilterHost::setParameter(Parameter parameter)

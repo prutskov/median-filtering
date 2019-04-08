@@ -23,8 +23,6 @@ void CVHelper::imageShow(int mode)
 	namedWindow(nameWindow, mode);
 	moveWindow(nameWindow, 0, 0);
 	imshow(nameWindow, _loadedImage);
-	_log->add("Show original image. Size: " + std::to_string(_loadedImage.rows)
-		+ "x" + std::to_string(_loadedImage.cols));
 }
 
 void CVHelper::imageShow(std::string name, Mat mat, int mode)
@@ -34,7 +32,6 @@ void CVHelper::imageShow(std::string name, Mat mat, int mode)
 	namedWindow(nameWindow, mode);
 	moveWindow(nameWindow, 0, 0);
 	imshow(nameWindow, mat);
-	_log->add("Show " + nameWindow);
 }
 
 void CVHelper::imageShow(std::string name, Frame image, int mode)
@@ -44,7 +41,6 @@ void CVHelper::imageShow(std::string name, Frame image, int mode)
 	namedWindow(nameWindow, mode);
 	moveWindow(nameWindow, 0, 0);
 	imshow(nameWindow, convertToMat(image));
-	_log->add("Show " + nameWindow);
 }
 
 bool CVHelper::isNullImage()

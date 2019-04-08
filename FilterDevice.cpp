@@ -19,19 +19,19 @@ FilterDevice::FilterDevice(Log * log) : Filter(log)
 	}
 }
 
-void FilterDevice::compute()
+void FilterDevice::compute(bool isLogging)
 {
 	if (_parameter.mask == Mask::MASK3X3)
 	{
-		compute3x3();
+		compute3x3(isLogging);
 	}
 	else
 	{
-		compute5x5();
+		compute5x5(isLogging);
 	}
 }
 
-void FilterDevice::compute3x3()
+void FilterDevice::compute3x3(bool isLogging)
 {
 	const int nRows = _frame.nRows - 2;
 	const int nCols = _frame.nCols - 2;
@@ -87,11 +87,15 @@ void FilterDevice::compute3x3()
 
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
-	_log->add(L"Filter: Device algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+
+	if (isLogging)
+	{
+		_log->add(L"Filter: Device algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+	}
 	_frame = result;
 }
 
-void FilterDevice::compute5x5()
+void FilterDevice::compute5x5(bool isLogging)
 {
 	const int nRows = _frame.nRows - 4;
 	const int nCols = _frame.nCols - 4;
@@ -147,7 +151,10 @@ void FilterDevice::compute5x5()
 
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
-	_log->add(L"Filter: Device algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+	if (isLogging)
+	{
+		_log->add(L"Filter: Device algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+	}
 	_frame = result;
 }
 

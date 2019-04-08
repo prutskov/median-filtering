@@ -5,7 +5,7 @@ class FilterHost :	public Filter
 {
 public:
 	FilterHost(Log *log);
-	void compute() override;
+	void compute(bool isLogging) override;
 	void setParameter(Parameter parameter);
 	virtual ~FilterHost();
 private:

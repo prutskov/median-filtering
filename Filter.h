@@ -25,7 +25,7 @@ public:
 	virtual Frame getFrame();
 	virtual void setFrame(const Frame &frame);
 	virtual void generateNoise(float percent);
-	virtual void compute() {};
+	virtual void compute(bool isLogging) {};
 	virtual std::vector<std::string> getDevices();
 
 	virtual ~Filter() {}
