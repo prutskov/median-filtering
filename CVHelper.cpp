@@ -27,6 +27,16 @@ void CVHelper::imageShow(int mode)
 		+ "x" + std::to_string(_loadedImage.cols));
 }
 
+void CVHelper::imageShow(std::string name, Mat mat, int mode)
+{
+	std::string nameWindow = name + " Size: " + std::to_string(mat.rows) +
+		"x" + std::to_string(mat.cols);
+	namedWindow(nameWindow, mode);
+	moveWindow(nameWindow, 0, 0);
+	imshow(nameWindow, mat);
+	_log->add("Show " + nameWindow);
+}
+
 void CVHelper::imageShow(std::string name, Frame image, int mode)
 {
 	std::string nameWindow = name + " Size: " + std::to_string(image.nRows) +

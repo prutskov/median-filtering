@@ -220,7 +220,7 @@ void CMedianFilteringDlg::OnBnClickedOpenVideo()
 		return;
 	}
 
-	namedWindow("Video", 1);
+	namedWindow("Filtered video", WINDOW_AUTOSIZE);
 	if (_acceleratorType == 0)
 	{
 		Parameter parameter = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
@@ -239,11 +239,12 @@ void CMedianFilteringDlg::OnBnClickedOpenVideo()
 		for (;;)
 		{
 			Mat frame;
-			video >> frame; // get a new frame from camera  
+			video >> frame; // get a new frame from camera
+			cvHelper->imageShow("Camera:", frame, WINDOW_AUTOSIZE);
 			filterHost->setFrame(cvHelper->convertToPtr(frame.clone()));
 			filterHost->compute();
 			Frame frameFiltered = filterHost->getFrame();
-			imshow("Video", cvHelper->convertToMat(frameFiltered));
+			imshow("Filtered video", cvHelper->convertToMat(frameFiltered));
 			if (waitKey(30) >= 0) break;
 		}
 	}
@@ -266,6 +267,19 @@ void CMedianFilteringDlg::OnBnClickedOpenVideo()
 		else
 		{
 			_log->add("Mask: 5x5");
+		}
+
+		for (;;)
+		{
+			Mat frame;
+			video >> frame; // get a new frame from camera
+			filterDevice->setFrame(cvHelper->convertToPtr(frame.clone()));
+			filterDevice->generateNoise(_percentNoise / 100.0F);
+			cvHelper->imageShow("Camera:", filterDevice->getFrame(), WINDOW_NORMAL);
+			filterDevice->compute();
+			Frame frameFiltered = filterDevice->getFrame();
+			imshow("Filtered video", cvHelper->convertToMat(frameFiltered));
+			if (waitKey(30) >= 0) break;
 		}
 	}
 	
