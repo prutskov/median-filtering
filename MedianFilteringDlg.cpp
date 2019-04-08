@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_OPEN_IMAGE, &CMedianFilteringDlg::OnBnClickedOpenImage)
 	ON_BN_CLICKED(IDC_FILTER, &CMedianFilteringDlg::OnBnClickedFilter)
 	ON_BN_CLICKED(IDC_OPEN_VIDEO, &CMedianFilteringDlg::OnBnClickedOpenVideo)
+	ON_BN_CLICKED(IDC_OPEN_VIDEOFILE, &CMedianFilteringDlg::OnBnClickedOpenVideofile)
 END_MESSAGE_MAP()
 
 
@@ -132,6 +133,93 @@ void CMedianFilteringDlg::loadImage()
 	}
 }
 
+std::string CMedianFilteringDlg::getVideoPath()
+{
+	CFileDialog fd(true, NULL, NULL, OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY |
+		OFN_LONGNAMES | OFN_PATHMUSTEXIST, _T("All Files (*.*)|*.*| AVI files (*.avi)|*.avi| MP4 files (*.mp4)|*.mp4| |"), NULL, 0, TRUE);
+
+	std::string outPath = "";
+	if (fd.DoModal() != IDOK)
+	{
+		MessageBox(L"File is not open!", L"Warning", MB_ICONWARNING);
+	}
+	else
+	{
+		CString path = fd.GetPathName();
+		CT2CA pathBuf(path);
+		std::string str(pathBuf);
+		outPath = str;
+	}
+	return outPath;
+}
+
+void CMedianFilteringDlg::videoFiltering(VideoCapture & video)
+{
+	namedWindow("Filtered video", WINDOW_NORMAL);
+	if (_acceleratorType == 0)
+	{
+		Parameter parameter = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
+		filterHost->setParameter(parameter);
+
+		_log->add(L"Selected host.");
+		if (parameter.mask == Mask::MASK3X3)
+		{
+			_log->add("Mask: 3x3");
+		}
+		else
+		{
+			_log->add("Mask: 5x5");
+		}
+
+		for (;;)
+		{
+			Mat frame;
+			video >> frame; // get a new frame from camera
+			filterHost->setFrame(cvHelper->convertToPtr(frame.clone()));
+			filterHost->generateNoise(_percentNoise / 100.0F);
+			cvHelper->imageShow("Camera:", filterHost->getFrame(), WINDOW_NORMAL);
+			filterHost->compute(false);
+			Frame frameFiltered = filterHost->getFrame();
+			imshow("Filtered video", cvHelper->convertToMat(frameFiltered));
+			if (waitKey(30) >= 0) break;
+		}
+	}
+	else if (_acceleratorType == 1)
+	{
+		ParameterDevice parameterDev;
+		parameterDev.mask = _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5;
+		parameterDev.activeDevice = _devicesNames.GetCurSel();
+
+		filterDevice->setParameter(parameterDev);
+
+		CString str;
+		_devicesNames.GetLBText(static_cast<int>(parameterDev.activeDevice), str);
+
+		_log->add(L"Selected device: " + std::wstring(str));
+		if (parameterDev.mask == Mask::MASK3X3)
+		{
+			_log->add("Mask: 3x3");
+		}
+		else
+		{
+			_log->add("Mask: 5x5");
+		}
+
+		for (;;)
+		{
+			Mat frame;
+			video >> frame; // get a new frame from camera
+			filterDevice->setFrame(cvHelper->convertToPtr(frame.clone()));
+			filterDevice->generateNoise(_percentNoise / 100.0F);
+			cvHelper->imageShow("Camera:", filterDevice->getFrame(), WINDOW_NORMAL);
+			filterDevice->compute(false);
+			Frame frameFiltered = filterDevice->getFrame();
+			imshow("Filtered video", cvHelper->convertToMat(frameFiltered));
+			if (waitKey(30) >= 0) break;
+		}
+	}
+}
+
 
 
 void CMedianFilteringDlg::OnBnClickedOpenImage()
@@ -187,7 +275,7 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 		filterDevice->setFrame(cvHelper->getImage());
 		
 		CString str;
-		_devicesNames.GetLBText(parameterDev.activeDevice, str);
+		_devicesNames.GetLBText(static_cast<int>(parameterDev.activeDevice), str);
 
 		_log->add(L"Selected device: " + std::wstring(str));
 		if (parameterDev.mask == Mask::MASK3X3)
@@ -220,67 +308,19 @@ void CMedianFilteringDlg::OnBnClickedOpenVideo()
 		return;
 	}
 
-	namedWindow("Filtered video", WINDOW_AUTOSIZE);
-	if (_acceleratorType == 0)
+	videoFiltering(video);	
+}
+
+
+void CMedianFilteringDlg::OnBnClickedOpenVideofile()
+{
+	UpdateData(TRUE);
+	VideoCapture video(getVideoPath());
+	if (!video.isOpened())
 	{
-		Parameter parameter = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
-		filterHost->setParameter(parameter);
-
-		_log->add(L"Selected host.");
-		if (parameter.mask == Mask::MASK3X3)
-		{
-			_log->add("Mask: 3x3");
-		}
-		else
-		{
-			_log->add("Mask: 5x5");
-		}
-
-		for (;;)
-		{
-			Mat frame;
-			video >> frame; // get a new frame from camera
-			cvHelper->imageShow("Camera:", frame, WINDOW_AUTOSIZE);
-			filterHost->setFrame(cvHelper->convertToPtr(frame.clone()));
-			filterHost->compute(false);
-			Frame frameFiltered = filterHost->getFrame();
-			imshow("Filtered video", cvHelper->convertToMat(frameFiltered));
-			if (waitKey(30) >= 0) break;
-		}
-	}
-	else if (_acceleratorType == 1)
-	{
-		ParameterDevice parameterDev;
-		parameterDev.mask = _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5;
-		parameterDev.activeDevice = _devicesNames.GetCurSel();
-
-		filterDevice->setParameter(parameterDev);
-
-		CString str;
-		_devicesNames.GetLBText(parameterDev.activeDevice, str);
-
-		_log->add(L"Selected device: " + std::wstring(str));
-		if (parameterDev.mask == Mask::MASK3X3)
-		{
-			_log->add("Mask: 3x3");
-		}
-		else
-		{
-			_log->add("Mask: 5x5");
-		}
-
-		for (;;)
-		{
-			Mat frame;
-			video >> frame; // get a new frame from camera
-			filterDevice->setFrame(cvHelper->convertToPtr(frame.clone()));
-			filterDevice->generateNoise(_percentNoise / 100.0F);
-			cvHelper->imageShow("Camera:", filterDevice->getFrame(), WINDOW_NORMAL);
-			filterDevice->compute(false);
-			Frame frameFiltered = filterDevice->getFrame();
-			imshow("Filtered video", cvHelper->convertToMat(frameFiltered));
-			if (waitKey(30) >= 0) break;
-		}
+		_log->add("Video don't opened.");
+		return;
 	}
 	
+	videoFiltering(video);
 }

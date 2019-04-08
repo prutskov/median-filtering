@@ -10,11 +10,12 @@
 #define IDC_EDIT1                       1003
 #define IDC_RADIO_MASK3                 1004
 #define IDC_RADIO_MASK5                 1005
-#define IDC_OPEN_IMAGE2                 1006
 #define IDC_OPEN_VIDEO                  1006
 #define IDC_LOG                         1007
 #define IDC_ACC_HOST                    1008
 #define IDC_ACC_GPU                     1009
+#define IDC_OPEN_IMAGE2                 1010
+#define IDC_OPEN_VIDEOFILE              1010
 #define IDC_COMBO1                      1011
 
 // Next default values for new objects

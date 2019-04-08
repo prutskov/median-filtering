@@ -37,6 +37,8 @@ protected:
 public:
 
 	void loadImage();
+	std::string getVideoPath();
+	void videoFiltering(VideoCapture &cap);
 	afx_msg void OnBnClickedOpenImage();
 	afx_msg void OnBnClickedFilter();
 	BOOL _isAddNoise;
@@ -53,4 +55,5 @@ public:
 	int _acceleratorType;
 	CComboBox _devicesNames;
 	afx_msg void OnBnClickedOpenVideo();
+	afx_msg void OnBnClickedOpenVideofile();
 };
