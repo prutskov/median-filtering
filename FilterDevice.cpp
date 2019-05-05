@@ -19,19 +19,25 @@ FilterDevice::FilterDevice(Log * log) : Filter(log)
 	}
 }
 
-void FilterDevice::compute()
+float FilterDevice::compute()
 {
 	if (_parameter.mask == Mask::MASK3X3)
 	{
-		compute3x3();
+		return compute3x3();
 	}
 	else
 	{
-		compute5x5();
+		return compute5x5();
 	}
 }
 
-void FilterDevice::compute3x3()
+void FilterDevice::setParameter(Parameter parameter)
+{
+	_parameter = parameter;
+	programBuild();
+}
+
+float FilterDevice::compute3x3()
 {
 	const int nRows = _frame.nRows - 2;
 	const int nCols = _frame.nCols - 2;
@@ -87,11 +93,11 @@ void FilterDevice::compute3x3()
 
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
-	_log->add(L"Filter: Device algorithm. Timing: " + std::to_wstring(duration) + L" ms");
 	_frame = result;
+	return duration;
 }
 
-void FilterDevice::compute5x5()
+float FilterDevice::compute5x5()
 {
 	const int nRows = _frame.nRows - 4;
 	const int nCols = _frame.nCols - 4;
@@ -147,14 +153,8 @@ void FilterDevice::compute5x5()
 
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
-	_log->add(L"Filter: Device algorithm. Timing: " + std::to_wstring(duration) + L" ms");
 	_frame = result;
-}
-
-void FilterDevice::setParameter(ParameterDevice parameter)
-{
-	_parameter = parameter;
-	programBuild();
+	return duration;
 }
 
 
@@ -164,8 +164,7 @@ FilterDevice::~FilterDevice()
 
 void FilterDevice::programBuild()
 {
-	auto activeDevice = static_cast<ParameterDevice*>(&_parameter)->activeDevice;
-	std::vector<cl::Device> device = { _devices[activeDevice] };
+	std::vector<cl::Device> device = { _devices[_parameter.activeDevice] };
 	cl::Context context(device);
 	_context = context;
 

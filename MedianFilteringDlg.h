@@ -46,10 +46,7 @@ public:
 
 	CVHelper* cvHelper;
 	Log *_log;
-
-	std::shared_ptr<FilterHost> filterHost;
-	std::shared_ptr<FilterDevice> filterDevice;
-
+	
 	int _acceleratorType;
 	CComboBox _devicesNames;
 };

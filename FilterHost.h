@@ -5,8 +5,7 @@ class FilterHost :	public Filter
 {
 public:
 	FilterHost(Log *log);
-	void compute() override;
-	void setParameter(Parameter parameter);
+	float compute() override;
 	virtual ~FilterHost();
 private:
 	void quickSort(uchar* data, int size);
@@ -14,6 +13,5 @@ private:
 	void median5x5(int x, int y, const Frame& frame, Frame& result, int indexRes);
 	void compute3x3();
 	void compute5x5();
-	Parameter _parameter;
 };
 

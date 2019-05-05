@@ -10,7 +10,7 @@ FilterHost::~FilterHost()
 {
 }
 
-void FilterHost::compute()
+float FilterHost::compute()
 {
 	auto start = std::chrono::high_resolution_clock::now();
 	if (_parameter.mask == Mask::MASK3X3)
@@ -23,13 +23,9 @@ void FilterHost::compute()
 	}
 	auto end = std::chrono::high_resolution_clock::now();
 	float duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0F;
-	_log->add(L"Filter: Host algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+	return duration;
 }
 
-void FilterHost::setParameter(Parameter parameter)
-{
-	_parameter = parameter;
-}
 
 void FilterHost::quickSort(uchar* data, int size)
 {

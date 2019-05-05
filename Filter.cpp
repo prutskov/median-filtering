@@ -16,6 +16,11 @@ void Filter::setFrame(const Frame & frame)
 	_frame = frame;
 }
 
+void Filter::setParameter(Parameter parameter)
+{
+	_parameter = parameter;
+}
+
 void Filter::generateNoise(float percent)
 {
 	const int nRows = _frame.nRows;
@@ -37,6 +42,6 @@ void Filter::generateNoise(float percent)
 
 std::vector<std::string> Filter::getDevices()
 {
-	std::vector<std::string> devices = { "degault" };
+	std::vector<std::string> devices = { "default" };
 	return devices;
 }

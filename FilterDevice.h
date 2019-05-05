@@ -11,20 +11,18 @@ class FilterDevice : public Filter
 {
 public:
 	FilterDevice(Log *log);
-	void compute() override;
-	void setParameter(ParameterDevice parameter);
-	/*Get vector of available devices*/
+	float compute() override;
+	void setParameter(Parameter parameter) override;
 	std::vector<std::string> getDevices();
 	virtual ~FilterDevice();
 private:
 	void programBuild();
-	void compute3x3();
-	void compute5x5();
+	float compute3x3();
+	float compute5x5();
 private:
 	std::vector<cl::Platform> _platforms;
 	std::vector<cl::Device> _devices;
 	cl::Program _program;
 	cl::Context _context;
-	ParameterDevice _parameter;
 };
 

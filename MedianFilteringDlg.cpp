@@ -61,8 +61,7 @@ BOOL CMedianFilteringDlg::OnInitDialog()
 	_log = new Log(&_logElement);
 	cvHelper = new CVHelper(_log);
 
-	filterHost = std::shared_ptr<FilterHost>(new FilterHost(_log));
-	filterDevice = std::shared_ptr<FilterDevice>(new FilterDevice(_log));
+	std::shared_ptr<FilterDevice> filterDevice = std::shared_ptr<FilterDevice>(new FilterDevice(_log));
 
 	auto devices = filterDevice->getDevices();
 	for (int i = 0; i < devices.size(); i++)
@@ -151,54 +150,49 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 		return;
 	}
 
+	std::shared_ptr<Filter> filter;
 	if (_acceleratorType == 0)
 	{
+		filter = std::shared_ptr<Filter>(new FilterHost(_log));
 		Parameter parameter = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
-		filterHost->setParameter(parameter);
-		filterHost->setFrame(cvHelper->getImage());
+		filter->setParameter(parameter);
+		filter->setFrame(cvHelper->getImage());
 
 		_log->add(L"Selected host.");
-		if (parameter.mask == Mask::MASK3X3)
-		{
-			_log->add("Mask: 3x3");
-		}
-		else
-		{
-			_log->add("Mask: 5x5");
-		}
 
+		parameter.mask == Mask::MASK3X3 ? _log->add("Mask: 3x3") : _log->add("Mask: 5x5");
 
 		if (_isAddNoise)
 		{
-			filterHost->generateNoise(_percentNoise / 100.0F);
-			cvHelper->imageShow("Noised image", filterHost->getFrame(), WINDOW_NORMAL);
+			filter->generateNoise(_percentNoise / 100.0F);
+			cvHelper->imageShow("Noised image", filter->getFrame(), WINDOW_NORMAL);
 		}
-		filterHost->compute();
-		cvHelper->imageShow("Host algorithm.", filterHost->getFrame(), WINDOW_NORMAL);
+		float duration = filter->compute();
+		_log->add(L"Filter: Host algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+		cvHelper->imageShow("Host algorithm.", filter->getFrame(), WINDOW_NORMAL);
 	}
 	else if (_acceleratorType == 1)
 	{
-		ParameterDevice parameterDev;
-		parameterDev.mask = _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5;
-		parameterDev.activeDevice = _devicesNames.GetCurSel();
+		filter = std::shared_ptr<Filter>(new FilterDevice(_log));
+		Parameter parameter;
+		parameter.mask = _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5;
+		parameter.activeDevice = _devicesNames.GetCurSel();
 
-		filterDevice->setParameter(parameterDev);
-		filterDevice->setFrame(cvHelper->getImage());
+		filter->setParameter(parameter);
+		filter->setFrame(cvHelper->getImage());
 		
 		CString str;
-		_devicesNames.GetLBText(parameterDev.activeDevice, str);
+		_devicesNames.GetLBText(parameter.activeDevice, str);
 
 		_log->add(L"Selected device: " + std::wstring(str));
-		if (parameterDev.mask == Mask::MASK3X3)
-		{
-			_log->add("Mask: 3x3");
-		}
+		parameter.mask == Mask::MASK3X3 ? _log->add("Mask: 3x3") : _log->add("Mask: 5x5");
 		if (_isAddNoise)
 		{
-			filterDevice->generateNoise(_percentNoise / 100.0F);
-			cvHelper->imageShow("Noised image", filterDevice->getFrame(), WINDOW_NORMAL);
+			filter->generateNoise(_percentNoise / 100.0F);
+			cvHelper->imageShow("Noised image", filter->getFrame(), WINDOW_NORMAL);
 		}
-		filterDevice->compute();
-		cvHelper->imageShow("Device algorithm. ", filterDevice->getFrame(), WINDOW_NORMAL);
+		float duration = filter->compute();
+		_log->add(L"Filter: Device algorithm. Timing: " + std::to_wstring(duration) + L" ms");
+		cvHelper->imageShow("Device algorithm. ", filter->getFrame(), WINDOW_NORMAL);
 	}
 }

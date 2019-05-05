@@ -11,10 +11,6 @@ enum Mask
 struct Parameter
 {
 	Mask mask = Mask::MASK3X3;
-};
-
-struct ParameterDevice : public Parameter
-{
 	size_t activeDevice = 0;
 };
 
@@ -24,13 +20,18 @@ public:
 	Filter(Log *log);
 	virtual Frame getFrame();
 	virtual void setFrame(const Frame &frame);
+	virtual void setParameter(Parameter parameter);
 	virtual void generateNoise(float percent);
-	virtual void compute() {};
+	virtual float compute() 
+	{
+		return 0;
+	};
 	virtual std::vector<std::string> getDevices();
 
 	virtual ~Filter() {}
 protected:
 	Frame _frame;
 	Log * _log;
+	Parameter _parameter;
 };
 
