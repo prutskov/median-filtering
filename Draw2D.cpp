@@ -34,6 +34,9 @@ void DrawGraph::DrawItem(LPDRAWITEMSTRUCT RECT)
 		for (int i = 0; i < size; ++i)
 		{
 			if (fabs(_pointsHost[i].Y) > maxY) maxY = fabs(_pointsHost[i].Y);
+			if (fabs(_pointsDevice0[i].Y) > maxY) maxY = fabs(_pointsDevice0[i].Y);
+			if (fabs(_pointsDevice1[i].Y) > maxY) maxY = fabs(_pointsDevice1[i].Y);
+			if (fabs(_pointsDevice2[i].Y) > maxY) maxY = fabs(_pointsDevice2[i].Y);
 			if (_pointsHost[i].X > maxX) maxX = _pointsHost[i].X;
 		}
 		if (maxY == 0 || maxX == 0)
@@ -59,9 +62,13 @@ void DrawGraph::DrawItem(LPDRAWITEMSTRUCT RECT)
 
 	SolidBrush brush(Color::White);
 	Pen graph_pen(Color::Yellow, 4);
+	SolidBrush brushHost(Color::Yellow);
 	Pen device0_pen(Color::Red, 4);
+	SolidBrush brushDevice0(Color::Red);
 	Pen device1_pen(Color::Blue, 4);
+	SolidBrush brushDevice1(Color::Blue);
 	Pen device2_pen(Color::Green, 4);
+	SolidBrush brushDevice2(Color::Green);
 
 	Pen bottom_pen(Color::Aqua, 4);
 	Pen osi_pen(Color::White, 3);
@@ -95,6 +102,15 @@ void DrawGraph::DrawItem(LPDRAWITEMSTRUCT RECT)
 	{
 		grBmp.DrawLine(&setka_pen, X(RECT, xmin), Y(RECT, y), X(RECT, xmax), Y(RECT, y));
 	}
+
+	CString str = L"Host";
+	grBmp.DrawString(str, -1, &podpis, PointF(X(RECT, step_x), Y(RECT, ymax/2) + 2.f), NULL, &brushHost);
+	str = L"Device: Intel GPU HD 620";
+	grBmp.DrawString(str, -1, &podpis, PointF(X(RECT, step_x), Y(RECT, ymax / 2) + 16.f), NULL, &brushDevice0);
+	str = L"Device: Intel CPU Core i5 8250u";
+	grBmp.DrawString(str, -1, &podpis, PointF(X(RECT, step_x), Y(RECT, ymax / 2) + 30.f), NULL, &brushDevice1);
+	str = L"Device: NVIDIA MX150";
+	grBmp.DrawString(str, -1, &podpis, PointF(X(RECT, step_x), Y(RECT, ymax / 2) + 44.f), NULL, &brushDevice2);
 
 	//подпись точек на горизонтали
 	for (double x = step_x; x <= xmax; x += step_x)

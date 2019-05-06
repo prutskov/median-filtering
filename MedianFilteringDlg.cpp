@@ -22,6 +22,9 @@ CMedianFilteringDlg::CMedianFilteringDlg(CWnd* pParent /*=nullptr*/)
 	, _percentNoise(30)
 	, _maskType(0)
 	, _acceleratorType(0)
+	, _minSize(500)
+	, _maxSize(3000)
+	, _stepSize(100)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -38,6 +41,9 @@ void CMedianFilteringDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PIC3X3, chart3x3);
 	DDX_Control(pDX, IDC_PROGRESS_BENCHMARK, _benchmarkProgress);
 	DDX_Control(pDX, IDC_PERCENT_PROGRESS, _percentProgress);
+	DDX_Text(pDX, IDC_EDIT2, _minSize);
+	DDX_Text(pDX, IDC_EDIT3, _maxSize);
+	DDX_Text(pDX, IDC_EDIT4, _stepSize);
 }
 
 BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
@@ -139,8 +145,8 @@ void CMedianFilteringDlg::runBenchmark(size_t beginSize, size_t endSize, size_t 
 	std::shared_ptr<Filter> filterHost = std::shared_ptr<Filter>(new FilterHost(_log));
 	std::shared_ptr<Filter> filterDevice = std::shared_ptr<Filter>(new FilterDevice(_log));
 	size_t nPoints = (endSize - beginSize) / step;
-	Parameter param = { Mask::MASK3X3 };
-	const size_t count = 5;
+	Parameter param = { _maskType == 0 ? Mask::MASK3X3 : Mask::MASK5X5 };
+	const size_t count = 3;
 
 	std::vector<PointF> hostResult;
 	std::vector<PointF> device0Result;
@@ -148,13 +154,13 @@ void CMedianFilteringDlg::runBenchmark(size_t beginSize, size_t endSize, size_t 
 	std::vector<PointF> device2Result;
 
 	int iter = 0;
+	float percent = (float)iter / nPoints * 100;
+	CString str;
+	str.Format(_TEXT("%.1f"), percent);
+	_percentProgress.SetWindowTextW(str + L"%");
+	_benchmarkProgress.SetPos(percent);
 	for (size_t imageSize = beginSize; imageSize <= endSize; imageSize += step)
-	{
-		float percent = (float)iter / nPoints * 100;
-		CString str;
-		str.Format(_TEXT("%.1f"), percent);
-		_percentProgress.SetWindowTextW(str + L"%");
-		_benchmarkProgress.SetPos(percent);
+	{		
 		/*Generate frame with current size*/
 		Frame frame = generateFrame(imageSize, imageSize);
 
@@ -216,6 +222,13 @@ void CMedianFilteringDlg::runBenchmark(size_t beginSize, size_t endSize, size_t 
 		}
 		pointDevice2.Y = static_cast<Gdiplus::REAL>(pointDevice2.Y / count);
 		device2Result.push_back(pointDevice2);
+
+		float percent = (float)iter / nPoints * 100;
+		CString str;
+		str.Format(_TEXT("%.1f"), percent);
+		_percentProgress.SetWindowTextW(str + L"%");
+		_benchmarkProgress.SetPos(percent);
+
 		iter++;
 	}
 	chart3x3._pointsHost = hostResult;
@@ -312,6 +325,7 @@ void CMedianFilteringDlg::OnBnClickedFilter()
 
 void CMedianFilteringDlg::OnBnClickedBenchmark()
 {
-	runBenchmark(100, 2000, 100);
+	UpdateData(TRUE);
+	runBenchmark(_minSize, _maxSize, _stepSize);
 	chart3x3.RedrawWindow();
 }

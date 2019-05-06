@@ -57,4 +57,7 @@ public:
 
 	CProgressCtrl _benchmarkProgress;
 	CStatic _percentProgress;
+	int _minSize;
+	int _maxSize;
+	int _stepSize;
 };
