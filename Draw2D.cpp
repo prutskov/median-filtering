@@ -27,14 +27,14 @@ void DrawGraph::DrawItem(LPDRAWITEMSTRUCT RECT)
 {
 	double maxY = 1;
 	double maxX = 1;
-	if (_points != nullptr&&_points[0].size() > 0)
+	if (_pointsHost.size() > 0)
 	{
 		maxY = 0;
-		int size = _points->size();
+		int size = _pointsHost.size();
 		for (int i = 0; i < size; ++i)
 		{
-			if (fabs(_points[0][i].Y) > maxY) maxY = fabs(_points[0][i].Y);
-			if (_points[0][i].X > maxX) maxX = _points[0][i].X;
+			if (fabs(_pointsHost[i].Y) > maxY) maxY = fabs(_pointsHost[i].Y);
+			if (_pointsHost[i].X > maxX) maxX = _pointsHost[i].X;
 		}
 		if (maxY == 0 || maxX == 0)
 		{
@@ -48,7 +48,7 @@ void DrawGraph::DrawItem(LPDRAWITEMSTRUCT RECT)
 
 	xmax = maxX;
 	xmin = -xmax / 100.f;
-	step_x = xmax / 12.f;
+	step_x = xmax / 8.f;
 	
 	Graphics gr(RECT->hDC);
 	Bitmap bmp(RECT->rcItem.right, RECT->rcItem.bottom, &gr);
@@ -119,14 +119,14 @@ void DrawGraph::DrawItem(LPDRAWITEMSTRUCT RECT)
 		str.Format(_T("%.5f"), y);
 		grBmp.DrawString(str, -1, &podpis, PointF(X(RECT, 0), Y(RECT, y) + 2.f), NULL, &brush);
 	}
-	if (_points != nullptr)
+	if (!_pointsHost.empty())
 	{
-		int size = _points->size();
+		int size = _pointsHost.size();
 		if (size > 1)
 			for (int i = 0; i < size - 1; ++i)
 			{
-				grBmp.DrawLine(&graph_pen, X(RECT, _points[0][i].X), Y(RECT, _points[0][i].Y),
-					X(RECT, _points[0][i + 1].X), Y(RECT, _points[0][i + 1].Y));
+				grBmp.DrawLine(&graph_pen, X(RECT, _pointsHost[i].X), Y(RECT, _pointsHost[i].Y),
+					X(RECT, _pointsHost[i + 1].X), Y(RECT, _pointsHost[i + 1].Y));
 			}
 	}
 	gr.DrawImage(&bmp, 0, 0);

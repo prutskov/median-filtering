@@ -38,6 +38,8 @@ protected:
 public:
 
 	void loadImage();
+	void runBenchmark(size_t beginSize, size_t endSize, size_t step);
+	Frame generateFrame(size_t nRows, size_t nCols);
 	afx_msg void OnBnClickedOpenImage();
 	afx_msg void OnBnClickedFilter();
 	BOOL _isAddNoise;
@@ -52,4 +54,5 @@ public:
 	CComboBox _devicesNames;
 	afx_msg void OnBnClickedBenchmark();
 	DrawGraph chart3x3;
+
 };

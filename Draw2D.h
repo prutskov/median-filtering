@@ -12,7 +12,10 @@ class DrawGraph : public CStatic
 
 public:
 	double xmin, xmax, ymin, ymax, step_x, step_y;
-	vector<PointF> * _points;
+	vector<PointF> _pointsHost;
+	vector<PointF> _pointsDevice0;
+	vector<PointF> _pointsDevice1;
+	vector<PointF> _pointsDevice2;
 	DrawGraph();
 	~DrawGraph();
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
