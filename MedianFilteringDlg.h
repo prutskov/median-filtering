@@ -8,6 +8,7 @@
 #include "FilterHost.h"
 #include "FilterDevice.h"
 #include "Log.h"
+#include "Draw2D.h"
 
 // Диалоговое окно CMedianFilteringDlg
 class CMedianFilteringDlg : public CDialogEx
@@ -49,4 +50,6 @@ public:
 	
 	int _acceleratorType;
 	CComboBox _devicesNames;
+	afx_msg void OnBnClickedBenchmark();
+	DrawGraph chart3x3;
 };
