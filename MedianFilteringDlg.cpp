@@ -36,6 +36,8 @@ void CMedianFilteringDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Radio(pDX, IDC_ACC_HOST, _acceleratorType);
 	DDX_Control(pDX, IDC_COMBO1, _devicesNames);
 	DDX_Control(pDX, IDC_PIC3X3, chart3x3);
+	DDX_Control(pDX, IDC_PROGRESS_BENCHMARK, _benchmarkProgress);
+	DDX_Control(pDX, IDC_PERCENT_PROGRESS, _percentProgress);
 }
 
 BEGIN_MESSAGE_MAP(CMedianFilteringDlg, CDialogEx)
@@ -145,8 +147,14 @@ void CMedianFilteringDlg::runBenchmark(size_t beginSize, size_t endSize, size_t 
 	std::vector<PointF> device1Result;
 	std::vector<PointF> device2Result;
 
+	int iter = 0;
 	for (size_t imageSize = beginSize; imageSize <= endSize; imageSize += step)
 	{
+		float percent = (float)iter / nPoints * 100;
+		CString str;
+		str.Format(_TEXT("%.1f"), percent);
+		_percentProgress.SetWindowTextW(str + L"%");
+		_benchmarkProgress.SetPos(percent);
 		/*Generate frame with current size*/
 		Frame frame = generateFrame(imageSize, imageSize);
 
@@ -208,12 +216,12 @@ void CMedianFilteringDlg::runBenchmark(size_t beginSize, size_t endSize, size_t 
 		}
 		pointDevice2.Y = static_cast<Gdiplus::REAL>(pointDevice2.Y / count);
 		device2Result.push_back(pointDevice2);
-
+		iter++;
 	}
 	chart3x3._pointsHost = hostResult;
-	chart3x3._pointsHost = device0Result;
-	chart3x3._pointsHost = device1Result;
-	chart3x3._pointsHost = device2Result;
+	chart3x3._pointsDevice0 = device0Result;
+	chart3x3._pointsDevice1 = device1Result;
+	chart3x3._pointsDevice2 = device2Result;
 }
 
 Frame CMedianFilteringDlg::generateFrame(size_t nRows, size_t nCols)

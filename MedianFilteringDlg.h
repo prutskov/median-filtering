@@ -55,4 +55,6 @@ public:
 	afx_msg void OnBnClickedBenchmark();
 	DrawGraph chart3x3;
 
+	CProgressCtrl _benchmarkProgress;
+	CStatic _percentProgress;
 };

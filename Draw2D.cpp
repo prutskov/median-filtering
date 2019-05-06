@@ -59,6 +59,10 @@ void DrawGraph::DrawItem(LPDRAWITEMSTRUCT RECT)
 
 	SolidBrush brush(Color::White);
 	Pen graph_pen(Color::Yellow, 4);
+	Pen device0_pen(Color::Red, 4);
+	Pen device1_pen(Color::Blue, 4);
+	Pen device2_pen(Color::Green, 4);
+
 	Pen bottom_pen(Color::Aqua, 4);
 	Pen osi_pen(Color::White, 3);
 	Pen setka_pen(Color::LightGray, 1);
@@ -127,6 +131,12 @@ void DrawGraph::DrawItem(LPDRAWITEMSTRUCT RECT)
 			{
 				grBmp.DrawLine(&graph_pen, X(RECT, _pointsHost[i].X), Y(RECT, _pointsHost[i].Y),
 					X(RECT, _pointsHost[i + 1].X), Y(RECT, _pointsHost[i + 1].Y));
+				grBmp.DrawLine(&device0_pen, X(RECT, _pointsDevice0[i].X), Y(RECT, _pointsDevice0[i].Y),
+					X(RECT, _pointsDevice0[i + 1].X), Y(RECT, _pointsDevice0[i + 1].Y));
+				grBmp.DrawLine(&device1_pen, X(RECT, _pointsDevice1[i].X), Y(RECT, _pointsDevice1[i].Y),
+					X(RECT, _pointsDevice1[i + 1].X), Y(RECT, _pointsDevice1[i + 1].Y));
+				grBmp.DrawLine(&device2_pen, X(RECT, _pointsDevice2[i].X), Y(RECT, _pointsDevice2[i].Y),
+					X(RECT, _pointsDevice2[i + 1].X), Y(RECT, _pointsDevice2[i + 1].Y));
 			}
 	}
 	gr.DrawImage(&bmp, 0, 0);
