@@ -24,6 +24,21 @@ struct Frame
 		dataBPtr = dataB;
 	}
 
+	Frame clone()
+	{
+		Frame frameCloned(nRows, nCols,
+			std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
+			std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
+			std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
+		frameCloned.nCols = nCols;
+		frameCloned.nRows = nRows;
+		std::memcpy(frameCloned.dataBPtr.get(), dataBPtr.get(), nRows*nCols * sizeof(uchar));
+		std::memcpy(frameCloned.dataGPtr.get(), dataGPtr.get(), nRows*nCols * sizeof(uchar));
+		std::memcpy(frameCloned.dataRPtr.get(), dataRPtr.get(), nRows*nCols * sizeof(uchar));
+
+		return frameCloned;
+	}
+
 	/*Pointer to uchar Red data in [0..255]*/
 	std::shared_ptr<uchar[]> dataRPtr;
 	std::shared_ptr<uchar[]> dataGPtr;

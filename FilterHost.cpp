@@ -34,19 +34,16 @@ void FilterHost::quickSort(uchar* data, int size)
 
 void FilterHost::compute3x3()
 {
-	const int nRows = _frame.nRows - 2;
-	const int nCols = _frame.nCols - 2;
-	Frame result(nRows, nCols,
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
-	
+	Frame result = _frame.clone();
+	const int nRows = result.nRows;
+	const int nCols = result.nCols;
+
 #pragma omp parallel for
-	for (int i = 0; i < nRows; i++)
+	for (int i = 1; i < nRows - 1; i++)
 	{
-		for (int j = 0; j < nCols; j++)
+		for (int j = 1; j < nCols - 1; j++)
 		{
-			median3x3(j + 1, i + 1, _frame, result, i*nCols + j);
+			median3x3(j, i, _frame, result, i*nCols + j);
 		}
 	}
 
@@ -137,21 +134,16 @@ void FilterHost::median5x5(int x, int y, const Frame& frame, Frame& result, int 
 
 void FilterHost::compute5x5()
 {
-	const int nRows = _frame.nRows - 4;
-	const int nCols = _frame.nCols - 4;
-	Frame result(nRows, nCols,
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
-
-	
+	Frame result = _frame.clone();
+	const int nRows = result.nRows;
+	const int nCols = result.nCols;
 
 #pragma omp parallel for
-	for (int i = 0; i < nRows; i++)
+	for (int i = 2; i < nRows - 2; i++)
 	{
-		for (int j = 0; j < nCols; j++)
+		for (int j = 2; j < nCols - 2; j++)
 		{
-			median5x5(j + 2, i + 2, _frame, result, i*nCols + j);
+			median5x5(j, i, _frame, result, i*nCols + j);
 		}
 	}
 
