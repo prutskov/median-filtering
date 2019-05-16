@@ -81,7 +81,7 @@ float FilterDevice::compute3x3()
 	kernel.setArg(6, imageGOut);
 	kernel.setArg(7, imageBOut);
 
-	comqueque.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(result.nRows, result.nCols));
+	comqueque.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(result.nRows, result.nCols), cl::NDRange(4, 4));
 	comqueque.finish();
 
 	comqueque.enqueueReadBuffer(imageROut, CL_TRUE, 0, result.nRows*result.nCols * sizeof(uchar), result.dataRPtr.get());
@@ -138,7 +138,7 @@ float FilterDevice::compute5x5()
 	kernel.setArg(6, imageGOut);
 	kernel.setArg(7, imageBOut);
 
-	comqueque.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(result.nRows, result.nCols));
+	comqueque.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(result.nRows, result.nCols), cl::NDRange(4, 4));
 	comqueque.finish();
 
 	comqueque.enqueueReadBuffer(imageROut, CL_TRUE, 0, result.nRows*result.nCols * sizeof(uchar), result.dataRPtr.get());
