@@ -138,8 +138,11 @@ __kernel void nativeFilter3x3(const int nRows, const int nCols,
 	int rowIdx = get_global_id(0);
 	int colIdx = get_global_id(1);
 
-	getMedian3x3(colIdx + 1, rowIdx + 1, nRows + 2, nCols + 2, rowIdx*nCols + colIdx, imageRIn, imageGIn, imageBIn,
-		imageROut, imageGOut, imageBOut);
+	if (((rowIdx > 0) && (rowIdx < (nRows - 1))) && ((colIdx > 0) && (colIdx < (nCols - 1))))
+	{
+		getMedian3x3(colIdx, rowIdx, nRows, nCols, rowIdx*nCols + colIdx, imageRIn, imageGIn, imageBIn,
+			imageROut, imageGOut, imageBOut);
+	}
 }
 
 __kernel void nativeFilter5x5(const int nRows, const int nCols,
@@ -149,7 +152,10 @@ __kernel void nativeFilter5x5(const int nRows, const int nCols,
 	int rowIdx = get_global_id(0);
 	int colIdx = get_global_id(1);
 
-	getMedian5x5(colIdx + 2, rowIdx + 2, nRows + 4, nCols + 4, rowIdx*nCols + colIdx,
-		imageRIn, imageGIn, imageBIn,
-		imageROut, imageGOut, imageBOut);
+	if (((rowIdx > 1) && (rowIdx < (nRows - 2))) && ((colIdx > 1) && (colIdx < (nCols - 2))))
+	{
+		getMedian5x5(colIdx, rowIdx, nRows, nCols, rowIdx*nCols + colIdx,
+			imageRIn, imageGIn, imageBIn,
+			imageROut, imageGOut, imageBOut);
+	}
 }

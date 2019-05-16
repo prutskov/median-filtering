@@ -39,12 +39,9 @@ void FilterDevice::setParameter(Parameter parameter)
 
 float FilterDevice::compute3x3()
 {
-	const int nRows = _frame.nRows - 2;
-	const int nCols = _frame.nCols - 2;
-	Frame result(nRows, nCols,
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
+	Frame result = _frame.clone();
+	const int nRows = result.nRows;
+	const int nCols = result.nCols;
 
 	cl::CommandQueue comqueque(_context, _context.getInfo<CL_CONTEXT_DEVICES>()[0]);
 
@@ -99,12 +96,9 @@ float FilterDevice::compute3x3()
 
 float FilterDevice::compute5x5()
 {
-	const int nRows = _frame.nRows - 4;
-	const int nCols = _frame.nCols - 4;
-	Frame result(nRows, nCols,
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()),
-		std::shared_ptr<uchar[]>(new uchar[nRows*nCols], std::default_delete<uchar[]>()));
+	Frame result = _frame.clone();
+	const int nRows = result.nRows;
+	const int nCols = result.nCols;
 
 	cl::CommandQueue comqueque(_context, _context.getInfo<CL_CONTEXT_DEVICES>()[0]);
 
