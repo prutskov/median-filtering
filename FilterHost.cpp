@@ -38,7 +38,7 @@ void FilterHost::compute3x3()
 	const int nRows = result.nRows;
 	const int nCols = result.nCols;
 
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 1; i < nRows - 1; i++)
 	{
 		for (int j = 1; j < nCols - 1; j++)
@@ -138,7 +138,7 @@ void FilterHost::compute5x5()
 	const int nRows = result.nRows;
 	const int nCols = result.nCols;
 
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 2; i < nRows - 2; i++)
 	{
 		for (int j = 2; j < nCols - 2; j++)
